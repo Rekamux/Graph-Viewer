@@ -7,6 +7,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -42,6 +43,9 @@ public class VertexToolPanel extends JPanel implements Observer
 	 * Select vertex mode
 	 */
 	private JRadioButton selectRadioButton = new JRadioButton("Select a vertex");
+	
+	/** Is label mode */
+	private JCheckBox labelCheckBox = new JCheckBox("Is a label");
 
 	/**
 	 * Radio button group
@@ -118,15 +122,19 @@ public class VertexToolPanel extends JPanel implements Observer
 
 		add(deleteRadioButton, 0, line);
 		line++;
+		
+		labelCheckBox.addActionListener(controller.getGraphController().getVertexLabelActionListener());
+		add(labelCheckBox, 0, line);
+		line++;
 
-		JLabel namePositionLabel = new JLabel("Name's position:");
+		JLabel namePositionLabel = new JLabel("Name position:");
 		add(namePositionLabel, 0, line);
 		line++;
 		nameAngleSlider.setMajorTickSpacing(180);
 		nameAngleSlider.setMinorTickSpacing(60);
 		nameAngleSlider.setPaintTicks(true);
 		nameAngleSlider.setPaintLabels(true);
-		nameAngleSlider.setToolTipText("Name's angle");
+		nameAngleSlider.setToolTipText("Name angle");
 		nameAngleSlider.addChangeListener(controller.getGraphController()
 				.getVertexNameThetaPositionChangeListener());
 		add(nameAngleSlider, 0, line);
@@ -193,5 +201,6 @@ public class VertexToolPanel extends JPanel implements Observer
 				vertexIndex).getNameAngle() : 0);
 		nameDistanceSlider.setValue(vertexIndex != -1 ? graph.getVertex(
 				vertexIndex).getNameDistance() : 0);
+		labelCheckBox.setSelected(vertexIndex != -1 ? graph.getVertex(vertexIndex).isLabel():controller.getModel().isNextVertexLabel());
 	}
 }

@@ -24,23 +24,37 @@ import model.Model.MouseActionMode;
  * 
  * @author Ax
  */
-public class GraphController extends AbstractController
-{
+public class GraphController extends AbstractController {
 	/**
 	 * Default constructor
 	 * 
 	 * @param controller
 	 */
-	public GraphController(MainController controller)
-	{
+	public GraphController(MainController controller) {
 		super(controller);
 	}
 
-	private ChangeListener vertexNameRoPositionChangeListener = new ChangeListener()
-	{
+	private ActionListener vertexLabelActionListener = new ActionListener() {
+
 		@Override
-		public void stateChanged(ChangeEvent e)
-		{
+		public void actionPerformed(ActionEvent e) {
+			GraphModel graph = controller.getModel().getCurrentGraph();
+			if (graph == null)
+				return;
+			int vertexIndex = controller.getModel().getCurrentVertexIndex();
+			JCheckBox box = (JCheckBox) e.getSource();
+			if (vertexIndex == -1) {
+				controller.getModel().setNextVertexLabel(box.isSelected());
+			} else {
+				graph.setVertexLabel(vertexIndex, box.isSelected());
+			}
+			controller.getModel().notifyObservers();
+		}
+	};
+
+	private ChangeListener vertexNameRoPositionChangeListener = new ChangeListener() {
+		@Override
+		public void stateChanged(ChangeEvent e) {
 			GraphModel graph = controller.getModel().getCurrentGraph();
 			if (graph == null)
 				return;
@@ -53,11 +67,9 @@ public class GraphController extends AbstractController
 		}
 	};
 
-	private ChangeListener vertexNameThetaPositionChangeListener = new ChangeListener()
-	{
+	private ChangeListener vertexNameThetaPositionChangeListener = new ChangeListener() {
 		@Override
-		public void stateChanged(ChangeEvent e)
-		{
+		public void stateChanged(ChangeEvent e) {
 			GraphModel graph = controller.getModel().getCurrentGraph();
 			if (graph == null)
 				return;
@@ -70,16 +82,13 @@ public class GraphController extends AbstractController
 		}
 	};
 
-	private KeyListener typeVertexNameKeyListener = new KeyListener()
-	{
+	private KeyListener typeVertexNameKeyListener = new KeyListener() {
 		@Override
-		public void keyTyped(KeyEvent arg0)
-		{
+		public void keyTyped(KeyEvent arg0) {
 		}
 
 		@Override
-		public void keyReleased(KeyEvent e)
-		{
+		public void keyReleased(KeyEvent e) {
 			JTextField textField = (JTextField) e.getSource();
 			String newName = textField.getText();
 			GraphModel graph = controller.getModel().getCurrentGraph();
@@ -93,21 +102,17 @@ public class GraphController extends AbstractController
 		}
 
 		@Override
-		public void keyPressed(KeyEvent arg0)
-		{
+		public void keyPressed(KeyEvent arg0) {
 		}
 	};
 
-	private KeyListener typeGraphNameKeyListener = new KeyListener()
-	{
+	private KeyListener typeGraphNameKeyListener = new KeyListener() {
 		@Override
-		public void keyTyped(KeyEvent e)
-		{
+		public void keyTyped(KeyEvent e) {
 		}
 
 		@Override
-		public void keyReleased(KeyEvent e)
-		{
+		public void keyReleased(KeyEvent e) {
 			JTextField textField = (JTextField) e.getSource();
 			String newName = textField.getText();
 			GraphModel graph = controller.getModel().getCurrentGraph();
@@ -118,48 +123,43 @@ public class GraphController extends AbstractController
 		}
 
 		@Override
-		public void keyPressed(KeyEvent e)
-		{
+		public void keyPressed(KeyEvent e) {
 		}
 	};
 
-	private KeyListener vertexNameKeyListener = new KeyListener()
-	{
+	private KeyListener vertexNameKeyListener = new KeyListener() {
 		@Override
-		public void keyTyped(KeyEvent e)
-		{
+		public void keyTyped(KeyEvent e) {
 			int vertexIndex = controller.getModel().getCurrentVertexIndex();
-			if (vertexIndex != -1)
-			{
-				controller.getModel().getCurrentGraph().setVertexName(
-						vertexIndex,
-						controller.getMainWindow().getToolPanel()
-								.getVertexToolPanel().getNameField().getText());
+			if (vertexIndex != -1) {
+				controller
+						.getModel()
+						.getCurrentGraph()
+						.setVertexName(
+								vertexIndex,
+								controller.getMainWindow().getToolPanel()
+										.getVertexToolPanel().getNameField()
+										.getText());
 			}
 			controller.getModel().notifyObservers();
 		}
 
 		@Override
-		public void keyReleased(KeyEvent arg0)
-		{
+		public void keyReleased(KeyEvent arg0) {
 		}
 
 		@Override
-		public void keyPressed(KeyEvent arg0)
-		{
+		public void keyPressed(KeyEvent arg0) {
 		}
 	};
 
-	private MouseListener graphPanelMouseListener = new MouseListener()
-	{
+	private MouseListener graphPanelMouseListener = new MouseListener() {
 		@Override
-		public void mouseReleased(MouseEvent event)
-		{
+		public void mouseReleased(MouseEvent event) {
 			Point point = event.getPoint();
 			Model model = controller.getModel();
 			MouseActionMode mouseActionMode = model.getMouseActionMode();
-			switch (mouseActionMode)
-			{
+			switch (mouseActionMode) {
 			case MOUSE_MOVES_VERTICES:
 				model.changeVerticesFixationInRectangle();
 				break;
@@ -184,13 +184,11 @@ public class GraphController extends AbstractController
 		}
 
 		@Override
-		public void mousePressed(MouseEvent event)
-		{
+		public void mousePressed(MouseEvent event) {
 			Model model = controller.getModel();
 			MouseActionMode mouseActionMode = model.getMouseActionMode();
 			Point point = event.getPoint();
-			switch (mouseActionMode)
-			{
+			switch (mouseActionMode) {
 			case MOUSE_MOVES_VERTICES:
 				model.startDraggingVertex(point);
 				break;
@@ -221,22 +219,18 @@ public class GraphController extends AbstractController
 		}
 
 		@Override
-		public void mouseExited(MouseEvent arg0)
-		{
+		public void mouseExited(MouseEvent arg0) {
 		}
 
 		@Override
-		public void mouseEntered(MouseEvent arg0)
-		{
+		public void mouseEntered(MouseEvent arg0) {
 		}
 
 		@Override
-		public void mouseClicked(MouseEvent e)
-		{
+		public void mouseClicked(MouseEvent e) {
 			Model model = controller.getModel();
 			MouseActionMode mouseActionMode = model.getMouseActionMode();
-			switch (mouseActionMode)
-			{
+			switch (mouseActionMode) {
 			case MOUSE_MOVES_VERTICES:
 				model.selectVertex(e.getPoint());
 				model.changeVertexFixation(e.getPoint());
@@ -251,21 +245,17 @@ public class GraphController extends AbstractController
 		}
 	};
 
-	private MouseMotionListener graphPanelMotionListener = new MouseMotionListener()
-	{
+	private MouseMotionListener graphPanelMotionListener = new MouseMotionListener() {
 		@Override
-		public void mouseMoved(MouseEvent arg0)
-		{
+		public void mouseMoved(MouseEvent arg0) {
 		}
 
 		@Override
-		public void mouseDragged(MouseEvent event)
-		{
+		public void mouseDragged(MouseEvent event) {
 			Point point = event.getPoint();
 			Model model = controller.getModel();
 			MouseActionMode mouseActionMode = model.getMouseActionMode();
-			switch (mouseActionMode)
-			{
+			switch (mouseActionMode) {
 			case MOUSE_MOVES_VERTICES:
 				model.dragVertex(point);
 				break;
@@ -288,11 +278,9 @@ public class GraphController extends AbstractController
 		}
 	};
 
-	private ActionListener shakeActionListener = new ActionListener()
-	{
+	private ActionListener shakeActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent arg0)
-		{
+		public void actionPerformed(ActionEvent arg0) {
 			GraphModel graph = controller.getModel().getCurrentGraph();
 			if (graph == null)
 				return;
@@ -301,11 +289,9 @@ public class GraphController extends AbstractController
 		}
 	};
 
-	private ActionListener componentShakeActionListener = new ActionListener()
-	{
+	private ActionListener componentShakeActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent arg0)
-		{
+		public void actionPerformed(ActionEvent arg0) {
 			GraphModel graph = controller.getModel().getCurrentGraph();
 			if (graph == null)
 				return;
@@ -314,11 +300,9 @@ public class GraphController extends AbstractController
 		}
 	};
 
-	private ActionListener complementActionListener = new ActionListener()
-	{
+	private ActionListener complementActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent arg0)
-		{
+		public void actionPerformed(ActionEvent arg0) {
 			GraphModel graph = controller.getModel().getCurrentGraph();
 			if (graph == null)
 				return;
@@ -327,16 +311,13 @@ public class GraphController extends AbstractController
 		}
 	};
 
-	private ActionListener allowMoveActionListener = new ActionListener()
-	{
+	private ActionListener allowMoveActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent e)
-		{
+		public void actionPerformed(ActionEvent e) {
 			JCheckBox b = (JCheckBox) e.getSource();
 			boolean checked = b.isSelected();
 			GraphModel graph = controller.getModel().getCurrentGraph();
-			if (!checked)
-			{
+			if (!checked) {
 				if (graph == null)
 					return;
 				graph.letEmMove();
@@ -346,11 +327,9 @@ public class GraphController extends AbstractController
 		}
 	};
 
-	private ActionListener orientedActionListener = new ActionListener()
-	{
+	private ActionListener orientedActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent e)
-		{
+		public void actionPerformed(ActionEvent e) {
 			GraphModel graph = controller.getModel().getCurrentGraph();
 			if (graph == null)
 				return;
@@ -364,96 +343,88 @@ public class GraphController extends AbstractController
 	/**
 	 * @return the vertexNameKeyListener
 	 */
-	public KeyListener getVertexNameKeyListener()
-	{
+	public KeyListener getVertexNameKeyListener() {
 		return vertexNameKeyListener;
 	}
 
 	/**
 	 * @return the graphPanelMouseListener
 	 */
-	public MouseListener getGraphPanelMouseListener()
-	{
+	public MouseListener getGraphPanelMouseListener() {
 		return graphPanelMouseListener;
 	}
 
 	/**
 	 * @return the graphPanelMotionListener
 	 */
-	public MouseMotionListener getGraphPanelMotionListener()
-	{
+	public MouseMotionListener getGraphPanelMotionListener() {
 		return graphPanelMotionListener;
 	}
 
 	/**
 	 * @return the shakeActionListener
 	 */
-	public ActionListener getShakeActionListener()
-	{
+	public ActionListener getShakeActionListener() {
 		return shakeActionListener;
 	}
 
 	/**
 	 * @return the componentShakeActionListener
 	 */
-	public ActionListener getComponentShakeActionListener()
-	{
+	public ActionListener getComponentShakeActionListener() {
 		return componentShakeActionListener;
 	}
 
 	/**
 	 * @return the complementActionListener
 	 */
-	public ActionListener getComplementActionListener()
-	{
+	public ActionListener getComplementActionListener() {
 		return complementActionListener;
 	}
 
 	/**
 	 * @return the allowMoveActionListener
 	 */
-	public ActionListener getAllowMoveActionListener()
-	{
+	public ActionListener getAllowMoveActionListener() {
 		return allowMoveActionListener;
 	}
 
 	/**
 	 * @return the orientedActionListener
 	 */
-	public ActionListener getOrientedActionListener()
-	{
+	public ActionListener getOrientedActionListener() {
 		return orientedActionListener;
 	}
 
 	/**
 	 * @return the typeGraphNameKeyListener
 	 */
-	public KeyListener getTypeGraphNameKeyListener()
-	{
+	public KeyListener getTypeGraphNameKeyListener() {
 		return typeGraphNameKeyListener;
 	}
 
 	/**
 	 * @return the typeVertexNameKeyListener
 	 */
-	public KeyListener getTypeVertexNameKeyListener()
-	{
+	public KeyListener getTypeVertexNameKeyListener() {
 		return typeVertexNameKeyListener;
 	}
 
 	/**
 	 * @return the vertexNameRoPositionChangeListener
 	 */
-	public ChangeListener getVertexNameRoPositionChangeListener()
-	{
+	public ChangeListener getVertexNameRoPositionChangeListener() {
 		return vertexNameRoPositionChangeListener;
 	}
 
 	/**
 	 * @return the vertexNameThetaPositionChangeListener
 	 */
-	public ChangeListener getVertexNameThetaPositionChangeListener()
-	{
+	public ChangeListener getVertexNameThetaPositionChangeListener() {
 		return vertexNameThetaPositionChangeListener;
+	}
+
+	public ActionListener getVertexLabelActionListener() {
+		return vertexLabelActionListener;
 	}
 }

@@ -10,7 +10,7 @@ import model.Model.Tool;
 import controller.MainController;
 
 /**
- * Contains a function init(StackPanel toolPanel, ProgramWindow w) that creates
+ * Contain a function init(StackPanel toolPanel, ProgramWindow w) that creates
  * all toolPanels and add them in toolPanel
  * 
  * @author Axel Schumacher

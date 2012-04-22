@@ -18,7 +18,7 @@ import model.GraphModel;
 import controller.MainController;
 
 /**
- * Provides a Tabbed Pane class with a distinction between set selected index
+ * Provides a tab pane class with a distinction between set selected index
  * from actions and from model
  * 
  * @author Ax
@@ -33,7 +33,7 @@ public class GraphTabbedPane extends JTabbedPane implements Observer
 	private MainController controller;
 
 	/**
-	 * lock against infinite notifications true if allowing them
+	 * Lock against infinite notifications true if allowing them
 	 */
 	private boolean notificationLock = true;
 

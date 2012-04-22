@@ -173,11 +173,11 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	}
 
 	/**
-	 * Adds a Vertex
+	 * Add a Vertex
 	 */
-	public Vertex addVertex(String name, int x, int y)
+	public Vertex addVertex(String name, int x, int y, boolean isLabel)
 	{
-		Vertex v = new Vertex(name, x, y, diameter);
+		Vertex v = new Vertex(name, x, y, diameter, isLabel);
 		addVertex(v);
 		setChanged();
 		return v;
@@ -430,7 +430,7 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 		{
 			if (createVerticesList)
 				verticesList.add(new Vertex(Vertex.indexToString(i), 0, 0,
-						diameter));
+						diameter, false));
 		}
 		if (createVerticesList)
 			moveAllVertices();

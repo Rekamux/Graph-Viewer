@@ -338,4 +338,14 @@ public class GraphModel extends GeometricGraph
 	{
 		return history.isDoNextPossible();
 	}
+
+	/**
+	 * Change vertex label state
+	 * @param vertexIndex vertex to change
+	 * @param selected is a label
+	 */
+	public void setVertexLabel(int vertexIndex, boolean selected) {
+		getVertex(vertexIndex).setLabel(selected);
+		System.out.println("Label of "+vertexIndex+": "+selected);
+	}
 }

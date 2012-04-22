@@ -52,22 +52,16 @@ import view.ProgramWindow;
  * @author Ax
  * 
  */
-public class ProgramController extends AbstractController
-{
-	private ActionListener changeColorActionListener = new ActionListener()
-	{
+public class ProgramController extends AbstractController {
+	private ActionListener changeColorActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			for (ColorOption option : ColorOption.values())
-			{
+		public void actionPerformed(ActionEvent e) {
+			for (ColorOption option : ColorOption.values()) {
 				if (controller.getMainWindow().getToolPanel()
 						.getGraphToolPanel().getColorButton(option) == e
-						.getSource())
-				{
+						.getSource()) {
 					Color color = chooseColor(option);
-					if (color != null)
-					{
+					if (color != null) {
 						controller.getModel().setColor(option, color);
 						controller.getModel().notifyObservers();
 					}
@@ -77,20 +71,16 @@ public class ProgramController extends AbstractController
 		}
 	};
 
-	private ActionListener closeGraphActionListener = new ActionListener()
-	{
+	private ActionListener closeGraphActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent e)
-		{
+		public void actionPerformed(ActionEvent e) {
 			JButton closeButton = (JButton) e.getSource();
 			GraphTabbedPane tab = controller.getMainWindow().getTab();
-			for (int i = 0; i < tab.getComponentCount(); i++)
-			{
+			for (int i = 0; i < tab.getComponentCount(); i++) {
 				JPanel panel = (JPanel) tab.getTabComponentAt(i);
 				JButton panelButton = (JButton) panel.getComponent(1);
 				if (closeButton.getActionCommand().equals(
-						panelButton.getActionCommand()))
-				{
+						panelButton.getActionCommand())) {
 					controller.getModel().removeGraph(i);
 					break;
 				}
@@ -101,22 +91,18 @@ public class ProgramController extends AbstractController
 		}
 	};
 
-	private ActionListener createCustomGraphActionListener = new ActionListener()
-	{
+	private ActionListener createCustomGraphActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent e)
-		{
+		public void actionPerformed(ActionEvent e) {
 			controller.getMainWindow().getOpenGraphDialog().getNameField()
 					.setText(controller.getModel().getNextGraphName());
 			controller.getMainWindow().getOpenGraphDialog().setVisible(true);
 		}
 	};
 
-	private ActionListener createEmptyGraphActionListener = new ActionListener()
-	{
+	private ActionListener createEmptyGraphActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent e)
-		{
+		public void actionPerformed(ActionEvent e) {
 			GraphModel graph = new GraphModel(controller.getModel()
 					.getNextGraphName(), controller.getModel());
 			createGraph(graph);
@@ -124,28 +110,23 @@ public class ProgramController extends AbstractController
 		}
 	};
 
-	private ActionListener doUndidActionListener = new ActionListener()
-	{
+	private ActionListener doUndidActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent arg0)
-		{
+		public void actionPerformed(ActionEvent arg0) {
 			controller.getModel().getCurrentGraph().doAgain();
 			controller.getModel().notifyObservers();
 		}
 	};
 
-	private KeyListener integerTextFieldKeyListener = new KeyListener()
-	{
+	private KeyListener integerTextFieldKeyListener = new KeyListener() {
 
 		@Override
-		public void keyPressed(KeyEvent e)
-		{
+		public void keyPressed(KeyEvent e) {
 			JTextField listened = (JTextField) e.getSource();
 			if (listened.getText().equals(""))
 				listened.setText("0");
 			Integer i = Computing.toInteger(String.valueOf((e.getKeyChar())));
-			if (i == null)
-			{
+			if (i == null) {
 				listened.setText(listened.getText().replace(
 						String.valueOf(e.getKeyChar()), ""));
 				listened.setSelectionStart(0);
@@ -154,83 +135,67 @@ public class ProgramController extends AbstractController
 		}
 
 		@Override
-		public void keyReleased(KeyEvent arg0)
-		{
+		public void keyReleased(KeyEvent arg0) {
 		}
 
 		@Override
-		public void keyTyped(KeyEvent arg0)
-		{
+		public void keyTyped(KeyEvent arg0) {
 		}
 	};
 
-	private ActionListener openGraphDialogCancelButtonActionListener = new ActionListener()
-	{
+	private ActionListener openGraphDialogCancelButtonActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent arg0)
-		{
+		public void actionPerformed(ActionEvent arg0) {
 			hideOpenGraphDialog();
 			controller.getModel().notifyObservers();
 		}
 	};
 
-	private ActionListener openGraphDialogOkButtonActionListener = new ActionListener()
-	{
+	private ActionListener openGraphDialogOkButtonActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent arg0)
-		{
+		public void actionPerformed(ActionEvent arg0) {
 			validateOpenGraphDialog();
 			controller.getModel().notifyObservers();
 		}
 	};
 
-	private ActionListener openGraphFromAdjacencyMatrixFileActionListener = new ActionListener()
-	{
+	private ActionListener openGraphFromAdjacencyMatrixFileActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent e)
-		{
+		public void actionPerformed(ActionEvent e) {
 			openGraphFromAdjacencyMatrixFile();
 			controller.getModel().notifyObservers();
 		}
 	};
 
-	private ActionListener openGraphFromSerializedFileActionListener = new ActionListener()
-	{
+	private ActionListener openGraphFromSerializedFileActionListener = new ActionListener() {
 
 		@Override
-		public void actionPerformed(ActionEvent e)
-		{
+		public void actionPerformed(ActionEvent e) {
 			openGraphFromSerializedFile();
 			controller.getModel().notifyObservers();
 		}
 	};
 
-	private ActionListener openGraphFromVerticesListFileActionListener = new ActionListener()
-	{
+	private ActionListener openGraphFromVerticesListFileActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent e)
-		{
+		public void actionPerformed(ActionEvent e) {
 			openGraphFromEdgesListFile();
 			controller.getModel().notifyObservers();
 		}
 	};
 
-	private ComponentListener resizeComponentListener = new ComponentListener()
-	{
+	private ComponentListener resizeComponentListener = new ComponentListener() {
 
 		@Override
-		public void componentHidden(ComponentEvent e)
-		{
+		public void componentHidden(ComponentEvent e) {
 		}
 
 		@Override
-		public void componentMoved(ComponentEvent e)
-		{
+		public void componentMoved(ComponentEvent e) {
 		}
 
 		@Override
-		public void componentResized(ComponentEvent e)
-		{
+		public void componentResized(ComponentEvent e) {
 			GraphTabbedPane graphTabbedPane = controller.getMainWindow()
 					.getTab();
 			if (graphTabbedPane.getComponentCount() == 0)
@@ -245,16 +210,13 @@ public class ProgramController extends AbstractController
 		}
 
 		@Override
-		public void componentShown(ComponentEvent e)
-		{
+		public void componentShown(ComponentEvent e) {
 		}
 	};
 
-	private ActionListener saveAdjacencyMatrixActionListener = new ActionListener()
-	{
+	private ActionListener saveAdjacencyMatrixActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent e)
-		{
+		public void actionPerformed(ActionEvent e) {
 			File file = browseInOrderToSave(
 					FileExtensions.textExtensionDescription,
 					FileExtensions.textExtension);
@@ -264,11 +226,9 @@ public class ProgramController extends AbstractController
 		}
 	};
 
-	private ActionListener saveEdgesListActionListener = new ActionListener()
-	{
+	private ActionListener saveEdgesListActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent e)
-		{
+		public void actionPerformed(ActionEvent e) {
 			File file = browseInOrderToSave(
 					FileExtensions.textExtensionDescription,
 					FileExtensions.textExtension);
@@ -278,11 +238,9 @@ public class ProgramController extends AbstractController
 		}
 	};
 
-	private ActionListener saveGraphActionListener = new ActionListener()
-	{
+	private ActionListener saveGraphActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent e)
-		{
+		public void actionPerformed(ActionEvent e) {
 			File file = browseInOrderToSave(
 					FileExtensions.serializedExtensionDescription,
 					FileExtensions.serializedExtension);
@@ -292,11 +250,9 @@ public class ProgramController extends AbstractController
 		}
 	};
 
-	private ActionListener saveGraphJPGImageActionListener = new ActionListener()
-	{
+	private ActionListener saveGraphJPGImageActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent e)
-		{
+		public void actionPerformed(ActionEvent e) {
 			File file = browseInOrderToSave(
 					FileExtensions.jpgExtensionDescription,
 					FileExtensions.jpgExtension);
@@ -306,11 +262,9 @@ public class ProgramController extends AbstractController
 		}
 	};
 
-	private ActionListener saveGraphPNGImageActionListener = new ActionListener()
-	{
+	private ActionListener saveGraphPNGImageActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent e)
-		{
+		public void actionPerformed(ActionEvent e) {
 			File file = browseInOrderToSave(
 					FileExtensions.pngExtensionDescription,
 					FileExtensions.pngExtension);
@@ -320,11 +274,9 @@ public class ProgramController extends AbstractController
 		}
 	};
 
-	private ActionListener savePSActionListener = new ActionListener()
-	{
+	private ActionListener savePSActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent e)
-		{
+		public void actionPerformed(ActionEvent e) {
 			File file = browseInOrderToSave(
 					FileExtensions.psExtensionDescription,
 					FileExtensions.pngExtension);
@@ -334,11 +286,9 @@ public class ProgramController extends AbstractController
 		}
 	};
 
-	private ActionListener selectVertexToolActionListener = new ActionListener()
-	{
+	private ActionListener selectVertexToolActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent arg0)
-		{
+		public void actionPerformed(ActionEvent arg0) {
 			if (controller.getModel().getCurrentGraph() == null)
 				createGraph(new GraphModel(controller.getModel()
 						.getNextGraphName(), controller.getModel()));
@@ -347,11 +297,9 @@ public class ProgramController extends AbstractController
 		}
 	};
 
-	private ActionListener selectEdgesToolActionListener = new ActionListener()
-	{
+	private ActionListener selectEdgesToolActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent arg0)
-		{
+		public void actionPerformed(ActionEvent arg0) {
 			if (controller.getModel().getCurrentGraph() == null)
 				createGraph(new GraphModel(controller.getModel()
 						.getNextGraphName(), controller.getModel()));
@@ -360,11 +308,9 @@ public class ProgramController extends AbstractController
 		}
 	};
 
-	private ActionListener selectGraphToolActionListener = new ActionListener()
-	{
+	private ActionListener selectGraphToolActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent arg0)
-		{
+		public void actionPerformed(ActionEvent arg0) {
 			if (controller.getModel().getCurrentGraph() == null)
 				createGraph(new GraphModel(controller.getModel()
 						.getNextGraphName(), controller.getModel()));
@@ -373,42 +319,37 @@ public class ProgramController extends AbstractController
 		}
 	};
 
-	private ActionListener undoActionListener = new ActionListener()
-	{
+	private ActionListener undoActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent arg0)
-		{
+		public void actionPerformed(ActionEvent arg0) {
 			controller.getModel().getCurrentGraph().undo();
 			controller.getModel().notifyObservers();
 		}
 	};
-	
-	private ActionListener selectCreateVerticesActionListener = new ActionListener()
-	{
+
+	private ActionListener selectCreateVerticesActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent arg0)
-		{
-			controller.getModel().setMouseActionMode(MouseActionMode.MOUSE_ADDS_VERTICES);
+		public void actionPerformed(ActionEvent arg0) {
+			controller.getModel().setMouseActionMode(
+					MouseActionMode.MOUSE_ADDS_VERTICES);
 			controller.getModel().notifyObservers();
 		}
 	};
-	
-	private ActionListener selectDeleteVerticesActionListener = new ActionListener()
-	{
+
+	private ActionListener selectDeleteVerticesActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent arg0)
-		{
-			controller.getModel().setMouseActionMode(MouseActionMode.MOUSE_DELETES_VERTICES);
+		public void actionPerformed(ActionEvent arg0) {
+			controller.getModel().setMouseActionMode(
+					MouseActionMode.MOUSE_DELETES_VERTICES);
 			controller.getModel().notifyObservers();
 		}
 	};
-	
-	private ActionListener selectSelectVerticesActionListener = new ActionListener()
-	{
+
+	private ActionListener selectSelectVerticesActionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			controller.getModel().setMouseActionMode(MouseActionMode.MOUSE_SELECTS_VERTICES);
+		public void actionPerformed(ActionEvent e) {
+			controller.getModel().setMouseActionMode(
+					MouseActionMode.MOUSE_SELECTS_VERTICES);
 			controller.getModel().notifyObservers();
 		}
 	};
@@ -419,19 +360,17 @@ public class ProgramController extends AbstractController
 	 * @param controller
 	 *            the controller
 	 */
-	public ProgramController(MainController controller)
-	{
+	public ProgramController(MainController controller) {
 		super(controller);
 	}
 
 	/**
 	 * Shows a browse file and then checks it
 	 */
-	private File browseGraph(String categoryName, String extension)
-	{
+	private File browseGraph(String categoryName, String extension) {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setCurrentDirectory(controller.getModel().getCurrentFile());
-		// chooser.setAcceptAllFileFilterUsed(false);
+		chooser.setAcceptAllFileFilterUsed(true);
 		chooser.setFileFilter(new FileNameExtensionFilter(categoryName,
 				extension));
 		int response = chooser.showOpenDialog(null);
@@ -444,11 +383,9 @@ public class ProgramController extends AbstractController
 	 * Saves a graph
 	 */
 	private File browseInOrderToSave(String extensionDescription,
-			String extensionName)
-	{
+			String extensionName) {
 		GraphModel graph = controller.getModel().getCurrentGraph();
-		if (graph == null)
-		{
+		if (graph == null) {
 			Messages.showGraphDoesntExistSaveError(controller);
 			return null;
 		}
@@ -460,17 +397,14 @@ public class ProgramController extends AbstractController
 		chooser.setSelectedFile(new File(graph.getGraphsName() + "."
 				+ extensionName));
 		boolean haveChosen = false;
-		while (!haveChosen)
-		{
+		while (!haveChosen) {
 			haveChosen = true;
 			int response = chooser.showSaveDialog(controller.getMainWindow());
-			if (response == JFileChooser.APPROVE_OPTION)
-			{
+			if (response == JFileChooser.APPROVE_OPTION) {
 				file = chooser.getSelectedFile();
 				String fileName = file.getName();
 				controller.getModel().setCurrentFile(file);
-				if (file.exists())
-				{
+				if (file.exists()) {
 					int replaceResponse = JOptionPane
 							.showConfirmDialog(
 									null,
@@ -478,32 +412,26 @@ public class ProgramController extends AbstractController
 											+ " already exists. Do you want to replace it?",
 									"File already exists",
 									JOptionPane.YES_NO_OPTION);
-					if (replaceResponse == JOptionPane.YES_OPTION)
-					{
-						if (!file.delete())
-						{
+					if (replaceResponse == JOptionPane.YES_OPTION) {
+						if (!file.delete()) {
 							haveChosen = false;
 							JOptionPane.showMessageDialog(null,
 									"Cannot delete " + fileName
 											+ ". Choose an other file.",
 									"Cannot delete", JOptionPane.OK_OPTION);
 						}
-						try
-						{
+						try {
 							file.createNewFile();
-						} catch (IOException e)
-						{
+						} catch (IOException e) {
 							Messages.showErrorMessage(controller,
 									"Cannot create this file !");
 						}
 					} else
 						haveChosen = false;
 				} else
-					try
-					{
+					try {
 						file.createNewFile();
-					} catch (IOException e)
-					{
+					} catch (IOException e) {
 						Messages.showErrorMessage(controller,
 								"Cannot create this file !");
 					}
@@ -517,8 +445,7 @@ public class ProgramController extends AbstractController
 	 * 
 	 * @param index
 	 */
-	public void changeCurrentGraphIndex(int index)
-	{
+	public void changeCurrentGraphIndex(int index) {
 		controller.getModel().setCurrentGraphIndex(index);
 		controller.getModel().notifyObservers();
 	}
@@ -526,8 +453,7 @@ public class ProgramController extends AbstractController
 	/**
 	 * Let the user to choose a color
 	 */
-	private Color chooseColor(ColorOption option)
-	{
+	private Color chooseColor(ColorOption option) {
 		Color c = JColorChooser.showDialog(getWindow(), "Choose "
 				+ controller.getModel().getColorSectionName(option) + " color",
 				controller.getModel().getColor(option));
@@ -539,8 +465,7 @@ public class ProgramController extends AbstractController
 	 * 
 	 * @param graph
 	 */
-	private void createGraph(GraphModel graph)
-	{
+	private void createGraph(GraphModel graph) {
 		controller.getModel().createGraph(graph);
 		graph.addObserver(controller.getMainWindow().getTab());
 		graph.addObserver(controller.getMainWindow().getToolPanel()
@@ -553,216 +478,189 @@ public class ProgramController extends AbstractController
 	/**
 	 * @return the changeColorActionListener
 	 */
-	public ActionListener getChangeColorActionListener()
-	{
+	public ActionListener getChangeColorActionListener() {
 		return changeColorActionListener;
 	}
 
 	/**
 	 * @return the closeGraphActionListener
 	 */
-	public ActionListener getCloseGraphActionListener()
-	{
+	public ActionListener getCloseGraphActionListener() {
 		return closeGraphActionListener;
 	}
 
 	/**
 	 * @return the createCustomGraphActionListener
 	 */
-	public ActionListener getCreateCustomGraphActionListener()
-	{
+	public ActionListener getCreateCustomGraphActionListener() {
 		return createCustomGraphActionListener;
 	}
 
 	/**
 	 * @return the createEmptyGraphActionListener
 	 */
-	public ActionListener getCreateEmptyGraphActionListener()
-	{
+	public ActionListener getCreateEmptyGraphActionListener() {
 		return createEmptyGraphActionListener;
 	}
 
 	/**
 	 * @return the doUndidActionListener
 	 */
-	public ActionListener getDoUndidActionListener()
-	{
+	public ActionListener getDoUndidActionListener() {
 		return doUndidActionListener;
 	}
 
 	/**
 	 * @return the integerTextFieldKeyListener
 	 */
-	public KeyListener getIntegerTextFieldKeyListener()
-	{
+	public KeyListener getIntegerTextFieldKeyListener() {
 		return integerTextFieldKeyListener;
 	}
 
 	/**
 	 * @return the model
 	 */
-	public Model getModel()
-	{
+	public Model getModel() {
 		return controller.getModel();
 	}
 
 	/**
 	 * @return the openGraphDialogCancelButtonActionListener
 	 */
-	public ActionListener getOpenGraphDialogCancelButtonActionListener()
-	{
+	public ActionListener getOpenGraphDialogCancelButtonActionListener() {
 		return openGraphDialogCancelButtonActionListener;
 	}
 
 	/**
 	 * @return the openGraphDialogOkButtonActionListener
 	 */
-	public ActionListener getOpenGraphDialogOkButtonActionListener()
-	{
+	public ActionListener getOpenGraphDialogOkButtonActionListener() {
 		return openGraphDialogOkButtonActionListener;
 	}
 
 	/**
 	 * @return the openGraphFromAdjacencyMatrixFileActionListener
 	 */
-	public ActionListener getOpenGraphFromAdjacencyMatrixFileActionListener()
-	{
+	public ActionListener getOpenGraphFromAdjacencyMatrixFileActionListener() {
 		return openGraphFromAdjacencyMatrixFileActionListener;
 	}
 
 	/**
 	 * @return the openGraphFromVerticesListFileActionListener
 	 */
-	public ActionListener getOpenGraphFromEdgesListFileActionListener()
-	{
+	public ActionListener getOpenGraphFromEdgesListFileActionListener() {
 		return openGraphFromVerticesListFileActionListener;
 	}
 
 	/**
 	 * @return the openGraphFromSerializedFileActionListener
 	 */
-	public ActionListener getOpenGraphFromSerializedFileActionListener()
-	{
+	public ActionListener getOpenGraphFromSerializedFileActionListener() {
 		return openGraphFromSerializedFileActionListener;
 	}
 
 	/**
 	 * @return the openGraphFromVerticesListFileActionListener
 	 */
-	public ActionListener getOpenGraphFromVerticesListFileActionListener()
-	{
+	public ActionListener getOpenGraphFromVerticesListFileActionListener() {
 		return openGraphFromVerticesListFileActionListener;
 	}
 
 	/**
 	 * @return the resizeComponentListener
 	 */
-	public ComponentListener getResizeComponentListener()
-	{
+	public ComponentListener getResizeComponentListener() {
 		return resizeComponentListener;
 	}
 
 	/**
 	 * @return the saveAdjacencyMatrixActionListener
 	 */
-	public ActionListener getSaveAdjacencyMatrixActionListener()
-	{
+	public ActionListener getSaveAdjacencyMatrixActionListener() {
 		return saveAdjacencyMatrixActionListener;
 	}
 
 	/**
 	 * @return the saveEdgesListActionListener
 	 */
-	public ActionListener getSaveEdgesListActionListener()
-	{
+	public ActionListener getSaveEdgesListActionListener() {
 		return saveEdgesListActionListener;
 	}
 
 	/**
 	 * @return the saveGraphActionListener
 	 */
-	public ActionListener getSaveGraphActionListener()
-	{
+	public ActionListener getSaveGraphActionListener() {
 		return saveGraphActionListener;
 	}
 
 	/**
 	 * @return the saveGraphJPGImageActionListener
 	 */
-	public ActionListener getSaveGraphJPGImageActionListener()
-	{
+	public ActionListener getSaveGraphJPGImageActionListener() {
 		return saveGraphJPGImageActionListener;
 	}
 
 	/**
 	 * @return the saveGraphPNGImageActionListener
 	 */
-	public ActionListener getSaveGraphPNGImageActionListener()
-	{
+	public ActionListener getSaveGraphPNGImageActionListener() {
 		return saveGraphPNGImageActionListener;
 	}
 
 	/**
 	 * @return the savePSActionListener
 	 */
-	public ActionListener getSavePSActionListener()
-	{
+	public ActionListener getSavePSActionListener() {
 		return savePSActionListener;
 	}
 
 	/**
 	 * @return the selectCreateVertexToolActionListener
 	 */
-	public ActionListener getSelectVertexToolActionListener()
-	{
+	public ActionListener getSelectVertexToolActionListener() {
 		return selectVertexToolActionListener;
 	}
 
 	/**
 	 * @return the selectEdgesToolActionListener
 	 */
-	public ActionListener getSelectEdgesToolActionListener()
-	{
+	public ActionListener getSelectEdgesToolActionListener() {
 		return selectEdgesToolActionListener;
 	}
 
 	/**
 	 * @return the selectGraphToolActionListener
 	 */
-	public ActionListener getSelectGraphToolActionListener()
-	{
+	public ActionListener getSelectGraphToolActionListener() {
 		return selectGraphToolActionListener;
 	}
 
 	/**
 	 * @return the undoActionListener
 	 */
-	public ActionListener getUndoActionListener()
-	{
+	public ActionListener getUndoActionListener() {
 		return undoActionListener;
 	}
 
 	/**
 	 * @return the window
 	 */
-	public ProgramWindow getWindow()
-	{
+	public ProgramWindow getWindow() {
 		return controller.getMainWindow();
 	}
 
 	/**
 	 * Hides open graph dialog
 	 */
-	private void hideOpenGraphDialog()
-	{
+	private void hideOpenGraphDialog() {
 		controller.getModel().setOpenGraphDialogShown(false);
 	}
 
 	/**
 	 * Opens a graph from a adjacency matrix
 	 */
-	private void openGraphFromAdjacencyMatrixFile()
-	{
+	private void openGraphFromAdjacencyMatrixFile() {
 		File file = browseGraph(FileExtensions.textExtensionDescription,
 				FileExtensions.textExtension);
 		if (!selectedFileIsValid(file))
@@ -773,8 +671,7 @@ public class ProgramController extends AbstractController
 	/**
 	 * Opens graph from a vertices list file
 	 */
-	private void openGraphFromEdgesListFile()
-	{
+	private void openGraphFromEdgesListFile() {
 		File file = browseGraph(FileExtensions.textExtensionDescription,
 				FileExtensions.textExtension);
 		if (!selectedFileIsValid(file))
@@ -785,8 +682,7 @@ public class ProgramController extends AbstractController
 	/**
 	 * Opens graph from a serialized file
 	 */
-	private void openGraphFromSerializedFile()
-	{
+	private void openGraphFromSerializedFile() {
 		File file = browseGraph(FileExtensions.serializedExtensionDescription,
 				FileExtensions.serializedExtension);
 		if (!selectedFileIsValid(file))
@@ -799,14 +695,11 @@ public class ProgramController extends AbstractController
 	 * 
 	 * @throws IOException
 	 */
-	private boolean selectedFileIsValid(File selectedFile)
-	{
-		if (selectedFile == null)
-		{
+	private boolean selectedFileIsValid(File selectedFile) {
+		if (selectedFile == null) {
 			return false;
 		}
-		if (!selectedFile.exists() || !selectedFile.isFile())
-		{
+		if (!selectedFile.exists() || !selectedFile.isFile()) {
 			Messages.showErrorMessage(controller,
 					"Selected file doesn't exist !");
 			return false;
@@ -819,22 +712,18 @@ public class ProgramController extends AbstractController
 	 * 
 	 * @param file
 	 */
-	private void serializeGraph(File file)
-	{
+	private void serializeGraph(File file) {
 		GraphModel graph = controller.getModel().getCurrentGraph();
-		if (graph == null)
-		{
+		if (graph == null) {
 			Messages.showGraphDoesntExistSaveError(controller);
 			return;
 		}
-		try
-		{
+		try {
 			ObjectOutputStream stream = new ObjectOutputStream(
 					new FileOutputStream(file));
 			stream.writeObject(graph);
 			stream.close();
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 			Messages.showCannotWriteFileError(controller);
 		}
@@ -846,67 +735,54 @@ public class ProgramController extends AbstractController
 	 * @param reader
 	 * @return
 	 */
-	private void testAdjacencyFile(File file)
-	{
+	private void testAdjacencyFile(File file) {
 		FileReader fileReader = null;
-		try
-		{
+		try {
 			fileReader = new FileReader(file);
 			BufferedReader reader = new BufferedReader(fileReader);
 			String s = null;
 			s = reader.readLine();
-			if (s == null)
-			{
+			if (s == null) {
 				Messages.showErrorMessage(controller, "This file is empty !");
 				return;
 			}
 			int i = 0;
 			int n = 0;
 			ArrayList<ArrayList<Boolean>> matrix = new ArrayList<ArrayList<Boolean>>();
-			while (s != null)
-			{
+			while (s != null) {
 				matrix.add(new ArrayList<Boolean>());
 				String values[] = s.split("[ ]");
 				int length = 0;
-				for (int j = 0; j < values.length; j++)
-				{
-					if (!values[j].equals(""))
-					{
+				for (int j = 0; j < values.length; j++) {
+					if (!values[j].equals("")) {
 						Boolean b = Computing.toBoolean(values[j]);
-						if (b == null)
-						{
+						if (b == null) {
 							Messages.showErrorMessage(controller, "At row " + i
 									+ " column " + j
 									+ ":\n value is not a 0 or a 1!");
 							return;
-						} else
-						{
+						} else {
 							matrix.get(i).add(b);
 							length++;
 						}
 					}
 				}
-				if (n == 0)
-				{
+				if (n == 0) {
 					n = length;
-					if (n == 0)
-					{
+					if (n == 0) {
 						Messages.showErrorMessage(controller,
 								"Given matrix is empty !");
 						return;
 					}
 				}
-				if (n != length)
-				{
-					Messages
-							.showErrorMessage(
-									controller,
-									"At row "
-											+ i
-											+ ":\n given matrix is not a square:\n row's length "
-											+ length
-											+ " previous row's length " + n
-											+ "!");
+				if (n != length) {
+					Messages.showErrorMessage(
+							controller,
+							"At row "
+									+ i
+									+ ":\n given matrix is not a square:\n row's length "
+									+ length + " previous row's length " + n
+									+ "!");
 					return;
 				}
 
@@ -914,8 +790,7 @@ public class ProgramController extends AbstractController
 
 				i++;
 			}
-			if (i != n)
-			{
+			if (i != n) {
 				Messages.showErrorMessage(controller,
 						"Given matrix is not a square:\n " + i + " rows " + n
 								+ " columns!");
@@ -927,30 +802,26 @@ public class ProgramController extends AbstractController
 					.getWidth(), controller.getMainWindow().getTab()
 					.getHeight(), matrix, controller.getModel());
 			createGraph(graph);
-		} catch (IOException e)
-		{
+		} catch (IOException e) {
 			Messages.showCannotReadFileError(controller);
 			return;
 		}
 	}
 
 	/***
-	 * Reads a file and tries to extract a graph using edges list from it
+	 * Read a file and try to extract a graph using edges list from it
 	 * 
 	 * @param reader
 	 * @return
 	 * @throws IOException
 	 */
-	private void testEdgesFile(File file)
-	{
+	private void testEdgesFile(File file) {
 		FileReader fileReader = null;
-		try
-		{
+		try {
 			fileReader = new FileReader(file);
 			BufferedReader reader = new BufferedReader(fileReader);
 			String line = reader.readLine();
-			if (line == null)
-			{
+			if (line == null) {
 				Messages.showEmptyFileError(controller);
 				return;
 			}
@@ -958,15 +829,12 @@ public class ProgramController extends AbstractController
 			ArrayList<String> vertices = new ArrayList<String>();
 			ArrayList<Couple<String>> edges = new ArrayList<Couple<String>>();
 			for (int i = 0; i < couples.length; i++)
-				if (!couples[i].equals(""))
-				{
+				if (!couples[i].equals("")) {
 					String sides[] = couples[i].split(",");
 					if (sides.length == 1 && !vertices.contains(sides[0]))
 						vertices.add(sides[0]);
-					else if (sides.length == 2)
-					{
-						if (sides[0].equals(sides[1]))
-						{
+					else if (sides.length == 2) {
+						if (sides[0].equals(sides[1])) {
 							Messages.showErrorMessage(controller,
 									"Selected file contains v,v edges !");
 							return;
@@ -976,30 +844,24 @@ public class ProgramController extends AbstractController
 						if (!vertices.contains(sides[1]))
 							vertices.add(sides[1]);
 						edges.add(new Couple<String>(sides[0], sides[1]));
-					} else if (sides.length > 2)
-					{
-						Messages
-								.showErrorMessage(controller,
-										"Giving vertices couple containing more than 2 vertices !");
+					} else if (sides.length > 2) {
+						Messages.showErrorMessage(controller,
+								"Giving vertices couple containing more than 2 vertices !");
 						return;
 					}
 				}
 			ArrayList<ArrayList<Boolean>> matrix = new ArrayList<ArrayList<Boolean>>();
 			int n = vertices.size();
-			for (int i = 0; i < n; i++)
-			{
+			for (int i = 0; i < n; i++) {
 				ArrayList<Boolean> vertexLine = new ArrayList<Boolean>();
-				for (int j = 0; j < n; j++)
-				{
+				for (int j = 0; j < n; j++) {
 					String vI = vertices.get(i);
 					String vJ = vertices.get(j);
 					boolean found = false;
-					for (int k = 0; k < edges.size() && !found; k++)
-					{
+					for (int k = 0; k < edges.size() && !found; k++) {
 						String first = edges.get(k).getFirst();
 						String second = edges.get(k).getSecond();
-						if (first.equals(vI) && second.equals(vJ))
-						{
+						if (first.equals(vI) && second.equals(vJ)) {
 							found = true;
 						}
 					}
@@ -1013,17 +875,16 @@ public class ProgramController extends AbstractController
 			ArrayList<Vertex> enteredVerticesList = new ArrayList<Vertex>();
 			for (int i = 0; i < n; i++)
 				enteredVerticesList.add(new Vertex(vertices.get(i), 0, 0,
-						diameter));
+						diameter, false));
 			fileReader.close();
 			GraphModel graph = new GraphModel(controller.getModel()
 					.getNextGraphName(), controller.getMainWindow().getTab()
 					.getWidth(), controller.getMainWindow().getTab()
-					.getHeight(), matrix, enteredVerticesList, controller
-					.getModel());
+					.getHeight(), matrix, enteredVerticesList,
+					controller.getModel());
 			createGraph(graph);
 			controller.getModel().getCurrentGraph().moveAllVertices();
-		} catch (IOException e)
-		{
+		} catch (IOException e) {
 			Messages.showCannotReadFileError(controller);
 		}
 	}
@@ -1033,18 +894,15 @@ public class ProgramController extends AbstractController
 	 * 
 	 * @param file
 	 */
-	private void testSerializedFile(File file)
-	{
-		try
-		{
+	private void testSerializedFile(File file) {
+		try {
 			ObjectInputStream stream = null;
 			stream = new ObjectInputStream(new FileInputStream(file));
 			GraphModel graph = (GraphModel) stream.readObject();
 			graph.linkModelAndCheck(controller.getModel());
 			stream.close();
 			createGraph(graph);
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null,
 					"This file is not a valid Graph Viewer File !");
@@ -1054,15 +912,14 @@ public class ProgramController extends AbstractController
 	/**
 	 * Applies open graph model
 	 */
-	private void validateOpenGraphDialog()
-	{
+	private void validateOpenGraphDialog() {
 		JTabbedPane p = controller.getMainWindow().getTab();
 		OpenGraphDialog dialog = controller.getMainWindow()
 				.getOpenGraphDialog();
 		controller.getModel().setOpenGraphDialogShown(false);
 		GraphModel graph = new GraphModel(dialog.getEnteredName(),
-				p.getWidth(), p.getHeight(), dialog.getEnteredN(), dialog
-						.getEnteredM(), controller.getModel());
+				p.getWidth(), p.getHeight(), dialog.getEnteredN(),
+				dialog.getEnteredM(), controller.getModel());
 		createGraph(graph);
 	}
 
@@ -1071,22 +928,18 @@ public class ProgramController extends AbstractController
 	 * 
 	 * @param file
 	 */
-	private void writeGraphAdjacency(File file)
-	{
+	private void writeGraphAdjacency(File file) {
 		GraphModel graph = controller.getModel().getCurrentGraph();
-		if (graph == null)
-		{
+		if (graph == null) {
 			Messages.showGraphDoesntExistSaveError(controller);
 			return;
 		}
 		FileWriter fileWriter = null;
-		try
-		{
+		try {
 			fileWriter = new FileWriter(file);
 			fileWriter.write(graph.adjacencyMatrixToString());
 			fileWriter.close();
-		} catch (IOException e)
-		{
+		} catch (IOException e) {
 			Messages.showCannotWriteFileError(controller);
 			e.printStackTrace();
 			return;
@@ -1098,22 +951,18 @@ public class ProgramController extends AbstractController
 	 * 
 	 * @param file
 	 */
-	private void writeGraphEdges(File file)
-	{
+	private void writeGraphEdges(File file) {
 		GraphModel graph = controller.getModel().getCurrentGraph();
-		if (graph == null)
-		{
+		if (graph == null) {
 			Messages.showGraphDoesntExistSaveError(controller);
 			return;
 		}
 		FileWriter fileWriter = null;
-		try
-		{
+		try {
 			fileWriter = new FileWriter(file);
 			fileWriter.write(graph.verticesListToString());
 			fileWriter.close();
-		} catch (IOException e)
-		{
+		} catch (IOException e) {
 			Messages.showCannotWriteFileError(controller);
 			return;
 		}
@@ -1122,23 +971,19 @@ public class ProgramController extends AbstractController
 	/**
 	 * Writes graph into an image file
 	 */
-	private void writeGraphImage(File file, String type)
-	{
+	private void writeGraphImage(File file, String type) {
 		GraphModel graph = controller.getModel().getCurrentGraph();
-		if (graph == null)
-		{
+		if (graph == null) {
 			Messages.showGraphDoesntExistSaveError(controller);
 			return;
 		}
-		BufferedImage bufferedImage = new BufferedImage(graph.getWidth(), graph
-				.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+		BufferedImage bufferedImage = new BufferedImage(graph.getWidth(),
+				graph.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
 		Graphics g = bufferedImage.getGraphics();
 		GraphPanel.drawGraph(controller, graph, g, graph.getDimension());
-		try
-		{
+		try {
 			ImageIO.write(bufferedImage, type, file);
-		} catch (IOException e)
-		{
+		} catch (IOException e) {
 			Messages.showCannotWriteFileError(controller);
 		}
 		g.dispose();
@@ -1149,11 +994,9 @@ public class ProgramController extends AbstractController
 	 * 
 	 * @param file
 	 */
-	private void writeGraphPS(File file)
-	{
+	private void writeGraphPS(File file) {
 		GraphModel graph = controller.getModel().getCurrentGraph();
-		if (graph == null)
-		{
+		if (graph == null) {
 			Messages.showGraphDoesntExistSaveError(controller);
 			return;
 		}
@@ -1162,27 +1005,23 @@ public class ProgramController extends AbstractController
 		int sheetWidth = 612;
 		int sheetHeight = 792;
 		int n = graph.getN();
-		try
-		{
+		try {
 			FileWriter fileWriter = new FileWriter(file);
 			fileWriter.write("%!PS-Adobe-3.0\n" + "%%BoundingBox: 0 0 "
 					+ sheetWidth + " " + sheetHeight + "\n");
-			for (int i = 0; i < n; i++)
-			{
+			for (int i = 0; i < n; i++) {
 				Vertex v = graph.getVertex(i);
 				fileWriter.write(v.drawPointPS(graphWidth, graphHeight,
 						sheetWidth, sheetHeight));
 			}
 			fileWriter.write("/Arial findfont " + graph.getDiameter() * 2
 					+ " scalefont setfont\n");
-			for (int i = 0; i < n; i++)
-			{
+			for (int i = 0; i < n; i++) {
 				Vertex v = graph.getVertex(i);
 				fileWriter.write(v.drawNamePS(graphWidth, graphHeight,
 						sheetWidth, sheetHeight));
 			}
-			for (int i = 0; i < n; i++)
-			{
+			for (int i = 0; i < n; i++) {
 				Vertex vI = graph.getVertex(i);
 				int xI = vI.getXPosition();
 				if (graphWidth > sheetWidth)
@@ -1191,8 +1030,7 @@ public class ProgramController extends AbstractController
 				if (graphHeight > sheetHeight)
 					yI = vI.getYPosition() * sheetHeight / graphHeight;
 				for (int j = 0; j < n; j++)
-					if (graph.areNeighbors(i, j))
-					{
+					if (graph.areNeighbors(i, j)) {
 						Vertex vJ = graph.getVertex(j);
 						int xJ = vJ.getXPosition();
 						if (graphWidth > sheetWidth)
@@ -1206,21 +1044,17 @@ public class ProgramController extends AbstractController
 								+ " moveto\n" + xJ + " "
 								+ Integer.toString(sheetHeight - yJ)
 								+ " lineto\n" + "stroke\n" + "\n");
-						if (!graph.isNonOriented())
-						{
+						if (!graph.isNonOriented()) {
 							int[] triangle = graph.getOrientedTriangle(xI, yI,
 									xJ, yJ);
-							for (int k = 0; k < 3; k++)
-							{
+							for (int k = 0; k < 3; k++) {
 								int xA, yA, xB, yB;
 								xA = triangle[2 * k];
 								yA = sheetHeight - triangle[2 * k + 1];
-								if (k == 2)
-								{
+								if (k == 2) {
 									xB = triangle[0];
 									yB = sheetHeight - triangle[1];
-								} else
-								{
+								} else {
 									xB = triangle[2 * k + 2];
 									yB = sheetHeight - triangle[2 * k + 3];
 								}
@@ -1235,8 +1069,7 @@ public class ProgramController extends AbstractController
 			}
 		}
 
-		catch (IOException e)
-		{
+		catch (IOException e) {
 			Messages.showCannotWriteFileError(controller);
 			return;
 		}
@@ -1245,24 +1078,21 @@ public class ProgramController extends AbstractController
 	/**
 	 * @return the selectCreateVerticesActionListener
 	 */
-	public ActionListener getSelectCreateVerticesActionListener()
-	{
+	public ActionListener getSelectCreateVerticesActionListener() {
 		return selectCreateVerticesActionListener;
 	}
 
 	/**
 	 * @return the selectSelectVerticesActionListener
 	 */
-	public ActionListener getSelectDeleteVerticesActionListener()
-	{
+	public ActionListener getSelectDeleteVerticesActionListener() {
 		return selectDeleteVerticesActionListener;
 	}
 
 	/**
 	 * @return the selectSelectVerticesActionListener
 	 */
-	public ActionListener getSelectSelectVerticesActionListener()
-	{
+	public ActionListener getSelectSelectVerticesActionListener() {
 		return selectSelectVerticesActionListener;
 	}
 }

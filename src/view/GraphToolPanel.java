@@ -127,17 +127,17 @@ public class GraphToolPanel extends JPanel implements Observer
 	/**
 	 * Component resize button
 	 */
-	private JButton complementButton = new JButton("Graph's complement");
+	private JButton complementButton = new JButton("Graph complement");
 
 	/**
 	 * Move check box
 	 */
-	private JCheckBox moveCheckBox = new JCheckBox("Search a better position");
+	private JCheckBox moveCheckBox = new JCheckBox("Search for a better position");
 
 	/**
 	 * Oriented check box
 	 */
-	private JCheckBox orientedCheckBox = new JCheckBox("This Graph is Oriented");
+	private JCheckBox orientedCheckBox = new JCheckBox("This Graph is directed");
 
 	/**
 	 * Constructor

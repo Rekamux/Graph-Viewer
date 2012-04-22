@@ -165,12 +165,12 @@ public class Model extends Observable
 	/**
 	 * Edges color
 	 */
-	private Color edgesColor = Color.blue;
+	private Color edgesColor = Color.black;
 
 	/**
 	 * Fixed color
 	 */
-	private Color fixedColor = Color.gray;
+	private Color fixedColor = Color.black;
 
 	/**
 	 * Former moved vertex position
@@ -196,6 +196,9 @@ public class Model extends Observable
 	 * Next created vertex name
 	 */
 	private String nextVertexName = "a";
+	
+	/** Is next created vertex a label */
+	private boolean nextVertexLabel = false;
 
 	/**
 	 * Is open graph dialog shown
@@ -205,7 +208,7 @@ public class Model extends Observable
 	/**
 	 * Selected color
 	 */
-	private Color selectedColor = Color.red;
+	private Color selectedColor = Color.black;
 
 	/**
 	 * Selected vertices
@@ -220,7 +223,7 @@ public class Model extends Observable
 	/**
 	 * Stamp color
 	 */
-	private Color stampColor = Color.orange;
+	private Color stampColor = Color.black;
 
 	/**
 	 * Vertex diameter multiplier : used when attempting to select a vertex
@@ -250,7 +253,7 @@ public class Model extends Observable
 			return;
 		int x = (int) point.getX();
 		int y = (int) point.getY();
-		g.addVertex(nextVertexName, x, y);
+		g.addVertex(nextVertexName, x, y, nextVertexLabel);
 		nextVertexName = Vertex.indexToString(g.getN());
 		setChanged();
 	};
@@ -867,5 +870,13 @@ public class Model extends Observable
 			graph.setHeight((int) dimension.getHeight());
 			graph.setWidth((int) dimension.getWidth());
 		}
+	}
+
+	public boolean isNextVertexLabel() {
+		return nextVertexLabel;
+	}
+
+	public void setNextVertexLabel(boolean nextVertexLabel) {
+		this.nextVertexLabel = nextVertexLabel;
 	}
 }
