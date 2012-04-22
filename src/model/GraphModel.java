@@ -2,6 +2,7 @@ package model;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.List;
 
 import model.history.AddingEdgeAction;
 import model.history.AddingVertexAction;
@@ -9,6 +10,7 @@ import model.history.HistoryModel;
 import model.history.MovingVertexAction;
 import model.history.RemovingEdgeAction;
 import model.history.RemovingVertexAction;
+import model.history.RemovingVerticesAction;
 
 /**
  * A graph main model
@@ -16,8 +18,7 @@ import model.history.RemovingVertexAction;
  * @author Axel Schumacher
  * 
  */
-public class GraphModel extends GeometricGraph
-{
+public class GraphModel extends GeometricGraph {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -31,15 +32,9 @@ public class GraphModel extends GeometricGraph
 	private transient HistoryModel history = new HistoryModel();
 
 	/**
-	 * History lock
-	 */
-	private transient boolean historyAskedIt = false;
-
-	/**
 	 * Constructs an empty graph
 	 */
-	public GraphModel(String name, Model model)
-	{
+	public GraphModel(String name, Model model) {
 		super(model);
 		this.graphsName = name;
 	}
@@ -55,8 +50,7 @@ public class GraphModel extends GeometricGraph
 	 * @param model
 	 */
 	public GraphModel(String name, int width, int height, int n, int m,
-			Model model)
-	{
+			Model model) {
 		super(width, height, n, m, model);
 		this.graphsName = name;
 	}
@@ -69,8 +63,7 @@ public class GraphModel extends GeometricGraph
 	 * @param height
 	 * @param model
 	 */
-	public GraphModel(String name, int width, int height, Model model)
-	{
+	public GraphModel(String name, int width, int height, Model model) {
 		super(width, height, model);
 		this.graphsName = name;
 	}
@@ -85,8 +78,7 @@ public class GraphModel extends GeometricGraph
 	 * @param m
 	 */
 	public GraphModel(String name, int width, int height,
-			ArrayList<ArrayList<Boolean>> matrix, Model m)
-	{
+			ArrayList<ArrayList<Boolean>> matrix, Model m) {
 		super(width, height, matrix, m);
 		this.graphsName = name;
 	}
@@ -103,8 +95,7 @@ public class GraphModel extends GeometricGraph
 	 */
 	public GraphModel(String name, int width, int height,
 			ArrayList<ArrayList<Boolean>> matrix,
-			ArrayList<Vertex> verticesList, Model m)
-	{
+			ArrayList<Vertex> verticesList, Model m) {
 		super(width, height, matrix, verticesList, m);
 		this.graphsName = name;
 	}
@@ -114,8 +105,7 @@ public class GraphModel extends GeometricGraph
 	 * 
 	 * @return
 	 */
-	public String verticesListToString()
-	{
+	public String verticesListToString() {
 		String result = "";
 		for (int i = 0; i < getN(); i++)
 			result += getVertex(i).getName() + " ";
@@ -130,13 +120,9 @@ public class GraphModel extends GeometricGraph
 	/**
 	 * Undo action
 	 */
-	public void undo()
-	{
-		if (history.isUndoPossible())
-		{
-			historyAskedIt = true;
+	public void undo() {
+		if (history.isUndoPossible()) {
 			history.undoLastAction();
-			historyAskedIt = false;
 		}
 		setChanged();
 	}
@@ -144,13 +130,9 @@ public class GraphModel extends GeometricGraph
 	/**
 	 * Do action
 	 */
-	public void doAgain()
-	{
-		if (history.isDoNextPossible())
-		{
-			historyAskedIt = true;
+	public void doAgain() {
+		if (history.isDoNextPossible()) {
 			history.doNextAction();
-			historyAskedIt = false;
 		}
 		setChanged();
 	}
@@ -158,8 +140,7 @@ public class GraphModel extends GeometricGraph
 	/**
 	 * @return the graphsName
 	 */
-	public String getGraphsName()
-	{
+	public String getGraphsName() {
 		return graphsName;
 	}
 
@@ -167,8 +148,7 @@ public class GraphModel extends GeometricGraph
 	 * @param graphsName
 	 *            the graphsName to set
 	 */
-	public void setGraphsName(String graphsName)
-	{
+	public void setGraphsName(String graphsName) {
 		this.graphsName = graphsName;
 		setChanged();
 	}
@@ -179,15 +159,13 @@ public class GraphModel extends GeometricGraph
 	 * @param vertexIndex
 	 * @param text
 	 */
-	public void setVertexName(int vertexIndex, String text)
-	{
+	public void setVertexName(int vertexIndex, String text) {
 		getVertex(vertexIndex).setName(text);
 		setChanged();
 	}
 
 	@Override
-	public void notifyObservers()
-	{
+	public void notifyObservers() {
 		super.notifyObservers();
 	}
 
@@ -197,8 +175,7 @@ public class GraphModel extends GeometricGraph
 	 * @param vertexIndex
 	 * @param value
 	 */
-	public void setVertexNameDistance(int vertexIndex, int value)
-	{
+	public void setVertexNameDistance(int vertexIndex, int value) {
 		getVertex(vertexIndex).setNameDistance(value);
 		setChanged();
 	}
@@ -209,8 +186,7 @@ public class GraphModel extends GeometricGraph
 	 * @param vertexIndex
 	 * @param value
 	 */
-	public void getVertexNameAngle(int vertexIndex, int value)
-	{
+	public void getVertexNameAngle(int vertexIndex, int value) {
 		getVertex(vertexIndex).setNameAngle(value);
 		setChanged();
 	}
@@ -219,8 +195,7 @@ public class GraphModel extends GeometricGraph
 	 * Checks if model is null and sets given in this case Checks if history is
 	 * null and initiates it in this case
 	 */
-	public void linkModelAndCheck(Model model)
-	{
+	public void linkModelAndCheck(Model model) {
 		if (this.model == null)
 			this.model = model;
 		if (history == null)
@@ -228,121 +203,125 @@ public class GraphModel extends GeometricGraph
 		setChanged();
 	}
 
-	@Override
-	public void addVertex(Vertex vertex)
-	{
-		if (!historyAskedIt)
-		{
-			AddingVertexAction action = new AddingVertexAction(vertex, this);
-			history.addAction(action);
-		}
+	public void addVertexWithHistory(Vertex vertex) {
+		AddingVertexAction action = new AddingVertexAction(vertex, this);
+		history.addAction(action);
 		super.addVertex(vertex);
 	}
 
-	@Override
-	public void moveVertex(int i, int x, int y)
-	{
-		if (!historyAskedIt)
-		{
-			Vertex v = getVertex(i);
-			MovingVertexAction action = new MovingVertexAction(v, v.getPoint(),
-					new Point(x, y));
-			history.addAction(action);
-		}
+	public void moveVertexWithHistory(int i, int x, int y) {
+		Vertex v = getVertex(i);
+		MovingVertexAction action = new MovingVertexAction(v, v.getPoint(),
+				new Point(x, y));
+		history.addAction(action);
 		super.moveVertex(i, x, y);
 	}
 
-	@Override
-	public void removeVertex(int i)
-	{
-		if (!historyAskedIt)
-		{
-			Vertex v = getVertex(i);
-			RemovingVertexAction a = new RemovingVertexAction(v, this);
-			history.addAction(a);
-		}
+	public void removeVertexWithHistory(int i) {
+		Vertex v = getVertex(i);
+		RemovingVertexAction a = new RemovingVertexAction(v, this);
+		history.addAction(a);
+
 		super.removeVertex(i);
 	}
 
-	@Override
-	public void removeVertex(Vertex v)
-	{
-		if (!historyAskedIt)
-		{
-			RemovingVertexAction a = new RemovingVertexAction(v, this);
-			history.addAction(a);
+	/**
+	 * Remove all vertices from an indices list
+	 * 
+	 * @param indices
+	 */
+	public void removeVerticesFromIndicesWithHistory(ArrayList<Integer> indices) {
+		ArrayList<Vertex> vertices = getVertices(indices);
+		removeVerticesWithHistory(vertices);
+	}
+
+	/**
+	 * Remove all vertices from a vertices list
+	 * 
+	 * @param vertices
+	 */
+	public void removeVerticesWithHistory(ArrayList<Vertex> vertices) {
+		RemovingVerticesAction a = new RemovingVerticesAction(vertices, this);
+		history.addAction(a);
+		removeVertices(vertices);
+	}
+
+	/**
+	 * Add a list of vertices
+	 * 
+	 * @param vertices
+	 */
+	public void addVertices(ArrayList<Vertex> vertices) {
+		for (Vertex v : vertices) {
+			super.addVertex(v);
 		}
+	}
+
+	protected ArrayList<Vertex> getVertices(List<Integer> indices) {
+		ArrayList<Vertex> vertices = new ArrayList<Vertex>();
+		for (Integer i : indices) {
+			vertices.add(verticesList.get(i));
+		}
+		return vertices;
+	}
+
+	public void removeVertexWithHistory(Vertex v) {
+		RemovingVertexAction a = new RemovingVertexAction(v, this);
+		history.addAction(a);
+
 		super.removeVertex(v);
 	}
 
-	@Override
-	public void setXPosition(int i, int position)
-	{
-		if (!historyAskedIt)
-		{
-			Vertex v = getVertex(i);
-			MovingVertexAction a = new MovingVertexAction(v, v.getPoint(),
-					new Point(position, (int) v.getPoint().getY()));
-			history.addAction(a);
-		}
+	public void setXPositionWithHistory(int i, int position) {
+		Vertex v = getVertex(i);
+		MovingVertexAction a = new MovingVertexAction(v, v.getPoint(),
+				new Point(position, (int) v.getPoint().getY()));
+		history.addAction(a);
+
 		super.setXPosition(i, position);
 	}
 
-	@Override
-	public void setYPosition(int i, int position)
-	{
-		if (!historyAskedIt)
-		{
-			Vertex v = getVertex(i);
-			MovingVertexAction a = new MovingVertexAction(v, v.getPoint(),
-					new Point((int) v.getPoint().getX(), position));
-			history.addAction(a);
-		}
+	public void setYPositionWithHistory(int i, int position) {
+		Vertex v = getVertex(i);
+		MovingVertexAction a = new MovingVertexAction(v, v.getPoint(),
+				new Point((int) v.getPoint().getX(), position));
+		history.addAction(a);
 		super.setYPosition(i, position);
 	}
 
-	@Override
-	public boolean addEdge(int i, int j)
-	{
-		if (!historyAskedIt)
-		{
-			AddingEdgeAction a = new AddingEdgeAction(i, j, this);
-			history.addAction(a);
-		}
+	public boolean addEdgeWithHistory(int i, int j) {
+		AddingEdgeAction a = new AddingEdgeAction(i, j, this);
+		history.addAction(a);
 		return super.addEdge(i, j);
 	}
 
-	@Override
-	public boolean removeEdge(int i, int j)
-	{
-		if (!historyAskedIt)
-		{
-			RemovingEdgeAction a = new RemovingEdgeAction(i, j, this);
-			history.addAction(a);
-		}
+	public boolean removeEdgeWithHistory(int i, int j) {
+		RemovingEdgeAction a = new RemovingEdgeAction(i, j, this);
+		history.addAction(a);
 		return super.removeEdge(i, j);
 	}
 
 	/**
 	 * @return is undo possible
 	 */
-	public boolean isUndoPossible()
-	{
+	public boolean isUndoPossible() {
 		return history.isUndoPossible();
 	}
 
 	/**
 	 * @return is do undid possible
 	 */
-	public boolean isDoNextPossible()
-	{
+	public boolean isDoNextPossible() {
 		return history.isDoNextPossible();
 	}
 
 	/**
 	 * Change vertex label state
-	 * @param vertexIndex vertex to change
-	 * @param selected is a label
+	 * 
+	 * @param vertexIndex
+	 *            vertex to change
+	 * @param selected
+	 *            is a label
 	 */
 	public void setVertexLabel(int vertexIndex, boolean selected) {
 		getVertex(vertexIndex).setLabel(selected);

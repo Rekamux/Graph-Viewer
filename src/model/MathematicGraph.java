@@ -348,7 +348,7 @@ public class MathematicGraph extends Observable implements Serializable
 	 * @param i
 	 *            Vertex to remove
 	 */
-	public void removeVertex(int i)
+	protected void removeVertex(int i)
 	{
 		adjacencyMatrix.remove(i);
 		n--;

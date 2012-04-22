@@ -52,7 +52,7 @@ public class GeometricGraph extends MathematicGraph implements Serializable {
 	/**
 	 * Vertices list
 	 */
-	private ArrayList<Vertex> verticesList = new ArrayList<Vertex>();
+	protected ArrayList<Vertex> verticesList = new ArrayList<Vertex>();
 
 	/**
 	 * Constructor using a vertices list
@@ -477,7 +477,7 @@ public class GeometricGraph extends MathematicGraph implements Serializable {
 	 */
 	public void removeVertex(Vertex v) {
 		int i = verticesList.indexOf(v);
-		this.removeVertex(i);
+		removeVertex(i);
 		setChanged();
 	}
 
@@ -534,6 +534,12 @@ public class GeometricGraph extends MathematicGraph implements Serializable {
 		setChanged();
 	}
 
+	public void removeVertices(ArrayList<Vertex> vertices) {
+		for (Vertex v : vertices) {
+			removeVertex(v);
+		}
+	}
+
 	/**
 	 * Stop move
 	 */
@@ -562,5 +568,9 @@ public class GeometricGraph extends MathematicGraph implements Serializable {
 				return i;
 		}
 		return -1;
+	}
+
+	public ArrayList<Vertex> getVerticesList() {
+		return verticesList;
 	}
 }

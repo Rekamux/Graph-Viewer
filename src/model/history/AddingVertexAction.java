@@ -16,11 +16,11 @@ public class AddingVertexAction extends AddingRemovingVertexAction
 
 	public void doAction() 
 	{
-		getGraphConcerned().addVertex(getVertexConcerned());
+		getGraphConcerned().addVertexWithHistory(getVertexConcerned());
 	}
 
 	public void undoAction()
 	{
-		getGraphConcerned().removeVertex(getVertexConcerned());
+		getGraphConcerned().removeVertexWithHistory(getVertexConcerned());
 	}
 }

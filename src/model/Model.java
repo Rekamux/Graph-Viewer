@@ -8,7 +8,6 @@ import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Observable;
-import java.util.Vector;
 
 /**
  * Main model containing graphs list and view parameters
@@ -300,7 +299,7 @@ public class Model extends Observable {
 			return;
 		if (selectionRectangle == null)
 			return;
-		Vector<Integer> indices = getIndicesInRectangle(graphics);
+		ArrayList<Integer> indices = getIndicesInRectangle(graphics);
 		for (Integer i : indices) {
 			Vertex v = g.getVertex(i);
 			if (!v.isLabel()) {
@@ -328,8 +327,8 @@ public class Model extends Observable {
 			return;
 		if (selectionRectangle == null)
 			return;
-		int index = getIndexInRectangle(graphics);
-		g.removeVertex(index);
+		ArrayList<Integer> indices = getIndicesInRectangle(graphics);
+		g.removeVerticesFromIndicesWithHistory(indices);
 		setChanged();
 	}
 
@@ -342,7 +341,7 @@ public class Model extends Observable {
 			return;
 		int i = g.whichVertex(point, vertexDiameterMultiplier, graphics);
 		if (i != -1)
-			g.removeVertex(i);
+			g.removeVertexWithHistory(i);
 		else
 			selectedVertexIndex = -1;
 		setChanged();
@@ -597,8 +596,8 @@ public class Model extends Observable {
 	}
 
 	/** Return all indices in rectangle, vector empty if not found */
-	public Vector<Integer> getIndicesInRectangle(Graphics graphics) {
-		Vector<Integer> indices = new Vector<Integer>();
+	public ArrayList<Integer> getIndicesInRectangle(Graphics graphics) {
+		ArrayList<Integer> indices = new ArrayList<Integer>();
 		GraphModel g = getCurrentGraph();
 		if (g == null)
 			return indices;
@@ -609,11 +608,14 @@ public class Model extends Observable {
 					.getCircleRectangle(vertexDiameterMultiplier))) {
 				indices.add(i);
 			}
-		for (int i = 0; i < g.getN(); i++)
-			if (selectionRectangle.intersects(g.getVertex(i).getNameRectangle(
-					graphics))) {
-				indices.add(i);
+		for (int i = 0; i < g.getN(); i++) {
+			Vertex v = g.getVertex(i);
+			if (selectionRectangle.intersects(v.getNameRectangle(graphics))) {
+				if (!indices.contains(i)) {
+					indices.add(i);
+				}
 			}
+		}
 		return indices;
 	}
 
