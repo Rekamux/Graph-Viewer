@@ -204,10 +204,7 @@ public class GraphController extends AbstractController {
 				break;
 
 			case MOUSE_SELECTS_VERTICES:
-				model.selectVertex(point, component.getGraphics());
-				int selectedVertex = model.getCurrentVertexIndex();
-				if (selectedVertex == -1)
-					model.setDrawingRectanglePosition(point);
+				model.setDrawingRectanglePosition(point);
 				break;
 
 			case MOUSE_DELETES_VERTICES:
@@ -239,6 +236,10 @@ public class GraphController extends AbstractController {
 				model.selectVertex(e.getPoint(), component.getGraphics());
 				model.changeVertexFixation(e.getPoint(),
 						component.getGraphics());
+				break;
+
+			case MOUSE_SELECTS_VERTICES:
+				model.selectVertex(e.getPoint(), component.getGraphics());
 				break;
 
 			case MOUSE_DELETES_VERTICES:

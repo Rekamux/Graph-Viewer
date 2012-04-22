@@ -81,10 +81,12 @@ public class GraphPanel extends JPanel implements Observer {
 		if (mouseActionMode == MouseActionMode.MOUSE_CHANGES_EDGES
 				&& selectedVertex != -1 && linkingPosition != null) {
 			Vertex v = graph.getVertex(selectedVertex);
-			g.setColor(model.getSelectedColor());
-			graph.drawEdge(g, v.getXPosition(), v.getYPosition(),
-					(int) linkingPosition.getX(), (int) linkingPosition.getY(),
-					false);
+			if (!v.isLabel()) {
+				g.setColor(model.getSelectedColor());
+				graph.drawEdge(g, v.getXPosition(), v.getYPosition(),
+						(int) linkingPosition.getX(),
+						(int) linkingPosition.getY(), false);
+			}
 		}
 		if (selectedVertex != -1) {
 			g.setColor(model.getSelectedColor());

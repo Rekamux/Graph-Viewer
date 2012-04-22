@@ -264,11 +264,18 @@ public class Model extends Observable {
 		int endVertex = g
 				.whichVertex(point, vertexDiameterMultiplier, graphics);
 		if (selectedVertexIndex != -1 && endVertex != -1
-				&& selectedVertexIndex != endVertex)
-			if (g.areNeighbors(selectedVertexIndex, endVertex))
+				&& selectedVertexIndex != endVertex) {
+			Vertex v1 = g.getVertex(selectedVertexIndex);
+			Vertex v2 = g.getVertex(endVertex);
+			if (v1.isLabel() || v2.isLabel()) {
+				return;
+			}
+			if (g.areNeighbors(selectedVertexIndex, endVertex)) {
 				g.removeEdge(selectedVertexIndex, endVertex);
-			else
+			} else {
 				g.addEdge(selectedVertexIndex, endVertex);
+			}
+		}
 		setChanged();
 	}
 

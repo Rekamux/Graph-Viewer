@@ -325,6 +325,11 @@ public class GraphModel extends GeometricGraph {
 	 */
 	public void setVertexLabel(int vertexIndex, boolean selected) {
 		getVertex(vertexIndex).setLabel(selected);
+		if (selected) {
+			for (int i=0; i<getN(); i++) {
+				removeEdge(vertexIndex, i);
+			}
+		}
 		setChanged();
 	}
 }
