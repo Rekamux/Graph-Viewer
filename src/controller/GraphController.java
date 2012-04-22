@@ -10,6 +10,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
@@ -159,24 +160,25 @@ public class GraphController extends AbstractController {
 			Point point = event.getPoint();
 			Model model = controller.getModel();
 			MouseActionMode mouseActionMode = model.getMouseActionMode();
+			JComponent component = (JComponent) event.getSource();
 			switch (mouseActionMode) {
 			case MOUSE_MOVES_VERTICES:
-				model.changeVerticesFixationInRectangle();
+				model.changeVerticesFixationInRectangle(component.getGraphics());
 				break;
 
 			case MOUSE_ADDS_VERTICES:
 				break;
 
 			case MOUSE_SELECTS_VERTICES:
-				model.selectInRectangle();
+				model.selectInRectangle(component.getGraphics());
 				break;
 
 			case MOUSE_DELETES_VERTICES:
-				model.deleteVertexInRectangle();
+				model.deleteVerticesInRectangle(component.getGraphics());
 				break;
 
 			case MOUSE_CHANGES_EDGES:
-				model.changeEdge(point);
+				model.changeEdge(point, component.getGraphics());
 				break;
 			}
 			model.initPoints();
@@ -188,9 +190,10 @@ public class GraphController extends AbstractController {
 			Model model = controller.getModel();
 			MouseActionMode mouseActionMode = model.getMouseActionMode();
 			Point point = event.getPoint();
+			JComponent component = (JComponent) event.getSource();
 			switch (mouseActionMode) {
 			case MOUSE_MOVES_VERTICES:
-				model.startDraggingVertex(point);
+				model.startDraggingVertex(point, component.getGraphics());
 				break;
 
 			case MOUSE_ADDS_VERTICES:
@@ -201,7 +204,7 @@ public class GraphController extends AbstractController {
 				break;
 
 			case MOUSE_SELECTS_VERTICES:
-				model.selectVertex(point);
+				model.selectVertex(point, component.getGraphics());
 				int selectedVertex = model.getCurrentVertexIndex();
 				if (selectedVertex == -1)
 					model.setDrawingRectanglePosition(point);
@@ -212,7 +215,7 @@ public class GraphController extends AbstractController {
 				break;
 
 			case MOUSE_CHANGES_EDGES:
-				model.selectVertex(point);
+				model.selectVertex(point, component.getGraphics());
 				break;
 			}
 			model.notifyObservers();
@@ -230,14 +233,16 @@ public class GraphController extends AbstractController {
 		public void mouseClicked(MouseEvent e) {
 			Model model = controller.getModel();
 			MouseActionMode mouseActionMode = model.getMouseActionMode();
+			JComponent component = (JComponent) e.getSource();
 			switch (mouseActionMode) {
 			case MOUSE_MOVES_VERTICES:
-				model.selectVertex(e.getPoint());
-				model.changeVertexFixation(e.getPoint());
+				model.selectVertex(e.getPoint(), component.getGraphics());
+				model.changeVertexFixation(e.getPoint(),
+						component.getGraphics());
 				break;
 
 			case MOUSE_DELETES_VERTICES:
-				model.deleteVertice(e.getPoint());
+				model.deleteVertice(e.getPoint(), component.getGraphics());
 				break;
 			}
 			model.notifyObservers();

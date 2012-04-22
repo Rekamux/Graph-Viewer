@@ -2,11 +2,13 @@ package model;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Observable;
+import java.util.Vector;
 
 /**
  * Main model containing graphs list and view parameters
@@ -14,18 +16,16 @@ import java.util.Observable;
  * @author Ax
  * 
  */
-public class Model extends Observable
-{
-	
-	public Model()
-	{
+public class Model extends Observable {
+
+	public Model() {
 		setChanged();
 	}
+
 	/**
 	 * Mouse action mode
 	 */
-	public static enum MouseActionMode
-	{
+	public static enum MouseActionMode {
 		MOUSE_ADDS_VERTICES, MOUSE_CHANGES_EDGES, MOUSE_DELETES_VERTICES, MOUSE_MOVES_VERTICES, MOUSE_SELECTS_VERTICES
 	}
 
@@ -35,8 +35,7 @@ public class Model extends Observable
 	 * @author Ax
 	 * 
 	 */
-	public static enum Tool
-	{
+	public static enum Tool {
 		VERTEX, EDGE, GRAPH
 	}
 
@@ -46,18 +45,15 @@ public class Model extends Observable
 	 * @author Ax
 	 * 
 	 */
-	public static enum ColorOption
-	{
-		BACKGROUND, VERTICES, FIXED, EDGES, SELECTED
+	public static enum ColorOption {
+		BACKGROUND, VERTICES, FIXED, EDGES, SELECTED, LABEL
 	}
 
 	/**
 	 * Changes the selected color
 	 */
-	public void setColor(ColorOption option, Color color)
-	{
-		switch (option)
-		{
+	public void setColor(ColorOption option, Color color) {
+		switch (option) {
 		case BACKGROUND:
 			backgroundColor = color;
 			break;
@@ -77,6 +73,10 @@ public class Model extends Observable
 		case VERTICES:
 			verticesColor = color;
 			break;
+
+		case LABEL:
+			setLabelColor(color);
+			break;
 		}
 		setChanged();
 	}
@@ -84,10 +84,8 @@ public class Model extends Observable
 	/**
 	 * Returns the concerned color
 	 */
-	public Color getColor(ColorOption option)
-	{
-		switch (option)
-		{
+	public Color getColor(ColorOption option) {
+		switch (option) {
 		case BACKGROUND:
 			return backgroundColor;
 
@@ -110,10 +108,8 @@ public class Model extends Observable
 	 * @param option
 	 * @return the name of the field containing the color
 	 */
-	public String getColorSectionName(ColorOption option)
-	{
-		switch (option)
-		{
+	public String getColorSectionName(ColorOption option) {
+		switch (option) {
 		case BACKGROUND:
 			return "background";
 
@@ -172,6 +168,9 @@ public class Model extends Observable
 	 */
 	private Color fixedColor = Color.black;
 
+	/** Label color */
+	private Color labelColor = Color.black;
+
 	/**
 	 * Former moved vertex position
 	 */
@@ -196,7 +195,7 @@ public class Model extends Observable
 	 * Next created vertex name
 	 */
 	private String nextVertexName = "a";
-	
+
 	/** Is next created vertex a label */
 	private boolean nextVertexLabel = false;
 
@@ -221,11 +220,6 @@ public class Model extends Observable
 	private Rectangle selectionRectangle = null;
 
 	/**
-	 * Stamp color
-	 */
-	private Color stampColor = Color.black;
-
-	/**
 	 * Vertex diameter multiplier : used when attempting to select a vertex
 	 */
 	private int vertexDiameterMultiplier = 2;
@@ -246,8 +240,7 @@ public class Model extends Observable
 	 * @param point
 	 *            position
 	 */
-	public void addVertex(Point point)
-	{
+	public void addVertex(Point point) {
 		GraphModel g = getCurrentGraph();
 		if (g == null)
 			return;
@@ -265,12 +258,12 @@ public class Model extends Observable
 	 * @param point
 	 *            end position
 	 */
-	public void changeEdge(Point point)
-	{
+	public void changeEdge(Point point, Graphics graphics) {
 		GraphModel g = getCurrentGraph();
 		if (g == null)
 			return;
-		int endVertex = g.whichVertex(point, vertexDiameterMultiplier);
+		int endVertex = g
+				.whichVertex(point, vertexDiameterMultiplier, graphics);
 		if (selectedVertexIndex != -1 && endVertex != -1
 				&& selectedVertexIndex != endVertex)
 			if (g.areNeighbors(selectedVertexIndex, endVertex))
@@ -283,15 +276,17 @@ public class Model extends Observable
 	/**
 	 * Change vertex fixation included in point
 	 */
-	public void changeVertexFixation(Point point)
-	{
+	public void changeVertexFixation(Point point, Graphics graphics) {
 		GraphModel g = getCurrentGraph();
 		if (g == null)
 			return;
-		int i = g.whichVertex(point, vertexDiameterMultiplier);
+		int i = g.whichVertex(point, vertexDiameterMultiplier, graphics);
 		if (i == -1)
 			return;
 		Vertex v = g.getVertex(i);
+		if (v.isLabel()) {
+			return;
+		}
 		v.setFixed(!v.isFixed());
 		setChanged();
 	}
@@ -299,55 +294,53 @@ public class Model extends Observable
 	/**
 	 * Inverts vertices fixation in drawn rectangle
 	 */
-	public void changeVerticesFixationInRectangle()
-	{
+	public void changeVerticesFixationInRectangle(Graphics graphics) {
 		GraphModel g = getCurrentGraph();
 		if (g == null)
 			return;
 		if (selectionRectangle == null)
 			return;
-		for (int i = 0; i < g.getN(); i++)
-		{
+		Vector<Integer> indices = getIndicesInRectangle(graphics);
+		for (Integer i : indices) {
 			Vertex v = g.getVertex(i);
-			if (selectionRectangle.contains(g.getVertex(i).getPoint()))
+			if (!v.isLabel()) {
 				v.setFixed(!v.isFixed());
+			}
 		}
+		setChanged();
 	}
 
 	/**
 	 * Adds a graph to the model
 	 */
-	public void createGraph(GraphModel graph)
-	{
+	public void createGraph(GraphModel graph) {
 		graphs.add(graph);
 		setCurrentGraphIndex(getGraphsCount() - 1);
 		setChanged();
 	}
 
 	/**
-	 * Deletes last vertex in rectangle drawn
+	 * Deletes all vertices in rectangle drawn
 	 */
-	public void deleteVertexInRectangle()
-	{
+	public void deleteVerticesInRectangle(Graphics graphics) {
 		GraphModel g = getCurrentGraph();
 		if (g == null)
 			return;
 		if (selectionRectangle == null)
 			return;
-		for (int i = g.getN() - 1; i >= 0; i--)
-			if (selectionRectangle.contains(g.getVertex(i).getPoint()))
-				g.removeVertex(i);
+		int index = getIndexInRectangle(graphics);
+		g.removeVertex(index);
+		setChanged();
 	}
 
 	/**
 	 * Tries to delete a vertex included in point
 	 */
-	public void deleteVertice(Point point)
-	{
+	public void deleteVertice(Point point, Graphics graphics) {
 		GraphModel g = getCurrentGraph();
 		if (g == null)
 			return;
-		int i = g.whichVertex(point, vertexDiameterMultiplier);
+		int i = g.whichVertex(point, vertexDiameterMultiplier, graphics);
 		if (i != -1)
 			g.removeVertex(i);
 		else
@@ -358,8 +351,7 @@ public class Model extends Observable
 	/**
 	 * Do action
 	 */
-	public void doAgain()
-	{
+	public void doAgain() {
 		GraphModel g = getCurrentGraph();
 		if (g != null)
 			g.doAgain();
@@ -371,14 +363,15 @@ public class Model extends Observable
 	 * @param point
 	 *            point
 	 */
-	public void dragVertex(Point point)
-	{
+	public void dragVertex(Point point) {
 		GraphModel g = getCurrentGraph();
 		if (g == null)
 			return;
 		if (vertexDragged == null)
 			return;
-		vertexDragged.setFixed(true);
+		if (!vertexDragged.isLabel()) {
+			vertexDragged.setFixed(true);
+		}
 		int x = (int) point.getX();
 		int y = (int) point.getY();
 		if (x >= 0 && x < g.getWidth())
@@ -391,24 +384,21 @@ public class Model extends Observable
 	/**
 	 * @return the backgroundColor
 	 */
-	public Color getBackgroundColor()
-	{
+	public Color getBackgroundColor() {
 		return backgroundColor;
 	}
 
 	/**
 	 * @return the currentFile
 	 */
-	public File getCurrentFile()
-	{
+	public File getCurrentFile() {
 		return currentFile;
 	}
 
 	/**
 	 * @return the current graph
 	 */
-	public GraphModel getCurrentGraph()
-	{
+	public GraphModel getCurrentGraph() {
 		if (currentGraphIndex < 0)
 			return null;
 		return graphs.get(currentGraphIndex);
@@ -417,64 +407,56 @@ public class Model extends Observable
 	/**
 	 * @return the currentGraphIndex
 	 */
-	public int getCurrentGraphIndex()
-	{
+	public int getCurrentGraphIndex() {
 		return currentGraphIndex;
 	}
 
 	/**
 	 * @return the currentTool
 	 */
-	public Tool getCurrentTool()
-	{
+	public Tool getCurrentTool() {
 		return currentTool;
 	}
 
 	/**
 	 * @return the currentVertex
 	 */
-	public int getCurrentVertexIndex()
-	{
+	public int getCurrentVertexIndex() {
 		return selectedVertexIndex;
 	}
 
 	/**
 	 * @return the draggingHotPoint
 	 */
-	public Point getDraggingHotPoint()
-	{
+	public Point getDraggingHotPoint() {
 		return draggingHotPoint;
 	}
 
 	/**
 	 * @return the drawingRectPosition
 	 */
-	public Point getDrawingRectPosition()
-	{
+	public Point getDrawingRectPosition() {
 		return drawingRectanglePosition;
 	}
 
 	/**
 	 * @return the edgesColor
 	 */
-	public Color getEdgesColor()
-	{
+	public Color getEdgesColor() {
 		return edgesColor;
 	}
 
 	/**
 	 * @return the fixedColor
 	 */
-	public Color getFixedColor()
-	{
+	public Color getFixedColor() {
 		return fixedColor;
 	}
 
 	/**
 	 * @return the formerPosition
 	 */
-	public Point getFormerPosition()
-	{
+	public Point getFormerPosition() {
 		return formerPosition;
 	}
 
@@ -485,112 +467,91 @@ public class Model extends Observable
 	 *            index
 	 * @return the graph indexed by graphIndex
 	 */
-	public GraphModel getGraph(int graphIndex)
-	{
+	public GraphModel getGraph(int graphIndex) {
 		return graphs.get(graphIndex);
 	}
 
 	/**
 	 * @return the total graphs count
 	 */
-	public int getGraphsCount()
-	{
+	public int getGraphsCount() {
 		return graphs.size();
 	}
 
 	/**
 	 * @return the linkingPosition
 	 */
-	public Point getLinkingPosition()
-	{
+	public Point getLinkingPosition() {
 		return linkingPosition;
 	}
 
 	/**
 	 * @return the mouseActionMode
 	 */
-	public MouseActionMode getMouseActionMode()
-	{
+	public MouseActionMode getMouseActionMode() {
 		return mouseActionMode;
 	}
 
 	/**
 	 * @return the next graph's default name
 	 */
-	public String getNextGraphName()
-	{
+	public String getNextGraphName() {
 		return "graph_" + getGraphsCount();
 	}
 
 	/**
 	 * @return the nextVertexName
 	 */
-	public String getNextVertexName()
-	{
+	public String getNextVertexName() {
 		return nextVertexName;
 	}
 
 	/**
 	 * @return the selectedColor
 	 */
-	public Color getSelectedColor()
-	{
+	public Color getSelectedColor() {
 		return selectedColor;
 	}
 
 	/**
 	 * @return the selectedVertex
 	 */
-	public int getSelectedVertex()
-	{
+	public int getSelectedVertex() {
 		return selectedVertexIndex;
 	}
 
 	/**
 	 * @return the selectedVertexIndex
 	 */
-	public int getSelectedVertexIndex()
-	{
+	public int getSelectedVertexIndex() {
 		return selectedVertexIndex;
 	}
 
 	/**
 	 * @return the selectionRect
 	 */
-	public Rectangle getSelectionRect()
-	{
+	public Rectangle getSelectionRect() {
 		return selectionRectangle;
-	}
-
-	/**
-	 * @return the stampColor
-	 */
-	public Color getStampColor()
-	{
-		return stampColor;
 	}
 
 	/**
 	 * @return the vertexDragged
 	 */
-	public Vertex getVertexDragged()
-	{
+	public Vertex getVertexDragged() {
 		return vertexDragged;
 	}
 
 	/**
 	 * @return the verticesColor
 	 */
-	public Color getVerticesColor()
-	{
+	public Color getVerticesColor() {
 		return verticesColor;
 	}
 
 	/**
 	 * Initiates all geometric points
 	 */
-	public void initPoints()
-	{
+	public void initPoints() {
 		drawingRectanglePosition = null;
 		vertexDragged = null;
 		draggingHotPoint = null;
@@ -603,51 +564,77 @@ public class Model extends Observable
 	/**
 	 * @return the openGraphDialogShown
 	 */
-	public boolean isOpenGraphDialogShown()
-	{
+	public boolean isOpenGraphDialogShown() {
 		return openGraphDialogShown;
 	}
 
 	@Override
-	public void notifyObservers()
-	{
+	public void notifyObservers() {
 		super.notifyObservers();
-		for (GraphModel graph : graphs)
-		{
+		for (GraphModel graph : graphs) {
 			graph.notifyObservers();
 		}
 	}
 
-	/**
-	 * Selects a vertex in drawn rectangle
-	 */
-	public void selectInRectangle()
-	{
+	/** Return first found index in rectangle, -1 if not found */
+	public int getIndexInRectangle(Graphics graphics) {
 		GraphModel g = getCurrentGraph();
 		if (g == null)
-			return;
+			return -1;
 		if (selectionRectangle == null)
-			return;
+			return -1;
 		for (int i = 0; i < g.getN(); i++)
-			if (selectionRectangle.contains(g.getVertex(i).getPoint()))
-			{
-				selectedVertexIndex = i;
-				return;
+			if (selectionRectangle.intersects(g.getVertex(i)
+					.getCircleRectangle(vertexDiameterMultiplier))) {
+				return i;
 			}
+		for (int i = 0; i < g.getN(); i++)
+			if (selectionRectangle.intersects(g.getVertex(i).getNameRectangle(
+					graphics))) {
+				return i;
+			}
+		return -1;
+	}
+
+	/** Return all indices in rectangle, vector empty if not found */
+	public Vector<Integer> getIndicesInRectangle(Graphics graphics) {
+		Vector<Integer> indices = new Vector<Integer>();
+		GraphModel g = getCurrentGraph();
+		if (g == null)
+			return indices;
+		if (selectionRectangle == null)
+			return indices;
+		for (int i = 0; i < g.getN(); i++)
+			if (selectionRectangle.intersects(g.getVertex(i)
+					.getCircleRectangle(vertexDiameterMultiplier))) {
+				indices.add(i);
+			}
+		for (int i = 0; i < g.getN(); i++)
+			if (selectionRectangle.intersects(g.getVertex(i).getNameRectangle(
+					graphics))) {
+				indices.add(i);
+			}
+		return indices;
+	}
+
+	/**
+	 * Select a vertex in drawn rectangle
+	 */
+	public void selectInRectangle(Graphics graphics) {
+		selectedVertexIndex = getIndexInRectangle(graphics);
 		setChanged();
 	}
 
 	/**
 	 * Selects vertex included in point
 	 */
-	public void selectVertex(Point point)
-	{
+	public void selectVertex(Point point, Graphics graphics) {
 		GraphModel g = getCurrentGraph();
 		if (g == null)
 			return;
 		if (vertexDragged != null)
 			vertexDragged = null;
-		int i = g.whichVertex(point, vertexDiameterMultiplier);
+		int i = g.whichVertex(point, vertexDiameterMultiplier, graphics);
 		selectedVertexIndex = i;
 		setChanged();
 	}
@@ -656,8 +643,7 @@ public class Model extends Observable
 	 * @param currentFile
 	 *            the currentFile to set
 	 */
-	public void setCurrentFile(File currentFile)
-	{
+	public void setCurrentFile(File currentFile) {
 		this.currentFile = currentFile;
 		setChanged();
 	}
@@ -666,8 +652,7 @@ public class Model extends Observable
 	 * @param currentGraphIndex
 	 *            the currentGraphIndex to set
 	 */
-	public void setCurrentGraphIndex(int currentGraphIndex)
-	{
+	public void setCurrentGraphIndex(int currentGraphIndex) {
 		this.currentGraphIndex = currentGraphIndex;
 		selectedVertexIndex = -1;
 		setChanged();
@@ -677,11 +662,9 @@ public class Model extends Observable
 	 * @param currentTool
 	 *            the currentTool to set
 	 */
-	public void setCurrentTool(Tool currentTool)
-	{
+	public void setCurrentTool(Tool currentTool) {
 		this.currentTool = currentTool;
-		switch (currentTool)
-		{
+		switch (currentTool) {
 		case GRAPH:
 			setMouseActionMode(MouseActionMode.MOUSE_MOVES_VERTICES);
 			break;
@@ -701,8 +684,7 @@ public class Model extends Observable
 	 * @param currentVertex
 	 *            the currentVertex to set
 	 */
-	public void setCurrentVertex(int currentVertex)
-	{
+	public void setCurrentVertex(int currentVertex) {
 		this.selectedVertexIndex = currentVertex;
 		setChanged();
 	}
@@ -711,8 +693,7 @@ public class Model extends Observable
 	 * @param drawingRectanglePosition
 	 *            the drawingRectanglePosition to set
 	 */
-	public void setDrawingRectanglePosition(Point drawingRectanglePosition)
-	{
+	public void setDrawingRectanglePosition(Point drawingRectanglePosition) {
 		this.drawingRectanglePosition = drawingRectanglePosition;
 		setChanged();
 	}
@@ -721,8 +702,7 @@ public class Model extends Observable
 	 * @param linkingPosition
 	 *            the linkingPosition to set
 	 */
-	public void setLinkingPosition(Point linkingPosition)
-	{
+	public void setLinkingPosition(Point linkingPosition) {
 		this.linkingPosition = linkingPosition;
 		setChanged();
 	}
@@ -730,8 +710,7 @@ public class Model extends Observable
 	/**
 	 * Changes mouse action mode
 	 */
-	public void setMouseActionMode(MouseActionMode i)
-	{
+	public void setMouseActionMode(MouseActionMode i) {
 		mouseActionMode = i;
 		initPoints();
 		selectedVertexIndex = -1;
@@ -742,8 +721,7 @@ public class Model extends Observable
 	 * @param nextVertexName
 	 *            the nextVertexName to set
 	 */
-	public void setNextVertexName(String nextVertexName)
-	{
+	public void setNextVertexName(String nextVertexName) {
 		this.nextVertexName = nextVertexName;
 		setChanged();
 	}
@@ -752,8 +730,7 @@ public class Model extends Observable
 	 * @param openGraphDialogShown
 	 *            the openGraphDialogShown to set
 	 */
-	public void setOpenGraphDialogShown(boolean openGraphDialogShown)
-	{
+	public void setOpenGraphDialogShown(boolean openGraphDialogShown) {
 		this.openGraphDialogShown = openGraphDialogShown;
 		setChanged();
 	}
@@ -762,8 +739,7 @@ public class Model extends Observable
 	 * @param selectedVertexIndex
 	 *            the selectedVertexIndex to set
 	 */
-	public void setSelectedVertexIndex(int selectedVertexIndex)
-	{
+	public void setSelectedVertexIndex(int selectedVertexIndex) {
 		this.selectedVertexIndex = selectedVertexIndex;
 		setChanged();
 	}
@@ -771,16 +747,14 @@ public class Model extends Observable
 	/**
 	 * Tries to start dragging a vertex or to draw a rectangle
 	 */
-	public void startDraggingVertex(Point point)
-	{
+	public void startDraggingVertex(Point point, Graphics graphics) {
 		GraphModel g = getCurrentGraph();
 		if (g == null)
 			return;
-		int i = g.whichVertex(point, vertexDiameterMultiplier);
+		int i = g.whichVertex(point, vertexDiameterMultiplier, graphics);
 		if (i == -1)
 			drawingRectanglePosition = point;
-		else
-		{
+		else {
 			vertexDragged = g.getVertex(i);
 			int x = (int) point.getX() - vertexDragged.getXPosition();
 			int y = (int) point.getY() - vertexDragged.getYPosition();
@@ -794,8 +768,7 @@ public class Model extends Observable
 	/**
 	 * Undo action
 	 */
-	public void undo()
-	{
+	public void undo() {
 		GraphModel g = getCurrentGraph();
 		if (g != null)
 			g.undo();
@@ -808,8 +781,7 @@ public class Model extends Observable
 	 * @param point
 	 *            point
 	 */
-	public void updateSelectionRectangle(Point point)
-	{
+	public void updateSelectionRectangle(Point point) {
 		GraphModel g = getCurrentGraph();
 		if (g == null)
 			return;
@@ -822,23 +794,19 @@ public class Model extends Observable
 		Point start = null;
 		int width = 0;
 		int height = 0;
-		if (xC <= xDRP && yC <= yDRP)
-		{
+		if (xC <= xDRP && yC <= yDRP) {
 			start = point;
 			width = xDRP - xC;
 			height = yDRP - yC;
-		} else if (xC <= xDRP)
-		{
+		} else if (xC <= xDRP) {
 			start = new Point(xC, yDRP);
 			width = xDRP - xC;
 			height = yC - yDRP;
-		} else if (yC <= yDRP)
-		{
+		} else if (yC <= yDRP) {
 			start = new Point(xDRP, yC);
 			width = xC - xDRP;
 			height = yDRP - yC;
-		} else
-		{
+		} else {
 			start = drawingRectanglePosition;
 			width = xC - xDRP;
 			height = yC - yDRP;
@@ -852,8 +820,7 @@ public class Model extends Observable
 	 * 
 	 * @param i
 	 */
-	public void removeGraph(int i)
-	{
+	public void removeGraph(int i) {
 		graphs.remove(i);
 		if (currentGraphIndex >= i)
 			currentGraphIndex--;
@@ -863,20 +830,38 @@ public class Model extends Observable
 	/**
 	 * Resize all graphs to given dimensions
 	 */
-	public void resizeGraphs(Dimension dimension)
-	{
-		for (GraphModel graph : graphs)
-		{
+	public void resizeGraphs(Dimension dimension) {
+		for (GraphModel graph : graphs) {
 			graph.setHeight((int) dimension.getHeight());
 			graph.setWidth((int) dimension.getWidth());
 		}
+		setChanged();
 	}
 
 	public boolean isNextVertexLabel() {
 		return nextVertexLabel;
 	}
 
-	public void setNextVertexLabel(boolean nextVertexLabel) {
-		this.nextVertexLabel = nextVertexLabel;
+	public void setNextVertexLabel(boolean label) {
+		this.nextVertexLabel = label;
+		setChanged();
+	}
+
+	public int getVertexDiameterMultiplier() {
+		return vertexDiameterMultiplier;
+	}
+
+	public void setVertexDiameterMultiplier(int vertexDiameterMultiplier) {
+		this.vertexDiameterMultiplier = vertexDiameterMultiplier;
+		setChanged();
+	}
+
+	public Color getLabelColor() {
+		return labelColor;
+	}
+
+	public void setLabelColor(Color labelColor) {
+		this.labelColor = labelColor;
+		setChanged();
 	}
 }

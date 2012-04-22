@@ -1,6 +1,8 @@
 package model;
 
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -55,14 +57,15 @@ public class Vertex implements Serializable {
 	 * Vertex's diameter in pixels
 	 */
 	private int diameter = 10;
-
-	/**
-	 * Vertex has been fixed or not
-	 */
+	
+	/** Vertex is fixed */
 	private boolean fixed = false;
-
-	/** Is a label */
+	
+	/** Vertex is a label */
 	private boolean label = false;
+
+	/** In program name font */
+	private Font font = new Font("Arial", Font.BOLD, diameter * 2);
 
 	/**
 	 * Basic empty constructor with an empty name, a 0x0 position and a 10px
@@ -88,12 +91,12 @@ public class Vertex implements Serializable {
 	 *            Vertex is a label
 	 */
 	public Vertex(String name, int xPosition, int yPosition, int diameter,
-			boolean isLabel) {
+			boolean label) {
 		this.name = name;
 		this.xPosition = xPosition;
 		this.yPosition = yPosition;
 		this.diameter = diameter;
-		this.label = isLabel;
+		this.label = label;
 		changeNamePosition();
 	}
 
@@ -130,10 +133,28 @@ public class Vertex implements Serializable {
 	 * 
 	 * @return
 	 */
-	public Rectangle getRectangle(int multiplier) {
-		return new Rectangle(xPosition - diameter * multiplier / 2, yPosition
-				- diameter * multiplier / 2, diameter * multiplier, diameter
-				* multiplier);
+
+	/**
+	 * Return Vertex selectable circle
+	 * 
+	 * @param multiplier
+	 *            user friendly multiplier
+	 * @return rectangle
+	 */
+	public Rectangle getCircleRectangle(int multiplier) {
+		int realWidth = diameter * multiplier;
+		Rectangle circle = new Rectangle(xPosition - realWidth / 2, yPosition
+				- realWidth / 2, realWidth, realWidth);
+		return circle;
+	}
+
+	public Rectangle getNameRectangle(Graphics g) {
+		FontMetrics metrics = g.getFontMetrics(font);
+		int hgt = metrics.getHeight();
+		int adv = metrics.stringWidth(name);
+		Dimension size = new Dimension(adv + 2, hgt + 2);
+		Rectangle result = new Rectangle(new Point(xName, yName), size);
+		return result;
 	}
 
 	/**
@@ -143,12 +164,11 @@ public class Vertex implements Serializable {
 	 *            Graphics passed by GeometricGraph
 	 */
 	public void draw(Graphics g) {
-		System.out.println(this);
-		if (!label) {
+		if (!isLabel()) {
 			g.fillOval(xPosition - diameter / 2, yPosition - diameter / 2,
 					diameter, diameter);
 		}
-		g.setFont(new Font("Arial", Font.BOLD, diameter * 2));
+		g.setFont(font);
 		g.drawString(name, xName, yName);
 	}
 
@@ -157,7 +177,7 @@ public class Vertex implements Serializable {
 	 */
 	public String drawPointPS(int graphWidth, int graphHeight, int sheetWidth,
 			int sheetHeight) {
-		if (label) {
+		if (isLabel()) {
 			return "";
 		}
 		int xPosition = this.xPosition;
@@ -194,7 +214,8 @@ public class Vertex implements Serializable {
 	 * ToString method
 	 */
 	public String toString() {
-		return (label?"Label ":"Vertex ") + name + " at " + xPosition + "x" + yPosition;
+		return (isLabel() ? "Label " : "Vertex ") + name + " at " + xPosition
+				+ "x" + yPosition;
 	}
 
 	/**
@@ -258,14 +279,7 @@ public class Vertex implements Serializable {
 	public void setDiameter(int diameter) {
 		this.diameter = diameter;
 		changeNamePosition();
-	}
-
-	public void setFixed(boolean fixed) {
-		this.fixed = fixed;
-	}
-
-	public boolean isFixed() {
-		return fixed;
+		font = new Font("Arial", Font.BOLD, diameter * 2);
 	}
 
 	public int getXName() {
@@ -302,12 +316,23 @@ public class Vertex implements Serializable {
 		return nameDistance;
 	}
 
+	public boolean isFixed() {
+		return fixed;
+	}
+
+	public void setFixed(boolean fixed) {
+		this.fixed = fixed;
+		if (label && !fixed) {
+			throw new IllegalArgumentException("Cannot set a label not fixed !");
+		}
+	}
+
 	public boolean isLabel() {
 		return label;
 	}
 
 	public void setLabel(boolean label) {
 		this.label = label;
+		setFixed(label);
 	}
-
 }

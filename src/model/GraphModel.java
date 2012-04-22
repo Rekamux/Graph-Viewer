@@ -346,6 +346,6 @@ public class GraphModel extends GeometricGraph
 	 */
 	public void setVertexLabel(int vertexIndex, boolean selected) {
 		getVertex(vertexIndex).setLabel(selected);
-		System.out.println("Label of "+vertexIndex+": "+selected);
+		setChanged();
 	}
 }

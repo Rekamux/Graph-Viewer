@@ -15,8 +15,7 @@ import view.SearchBetterPosition;
  * 
  * @author Axel Schumacher
  */
-public class GeometricGraph extends MathematicGraph implements Serializable
-{
+public class GeometricGraph extends MathematicGraph implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -27,12 +26,12 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	/**
 	 * Graph's height
 	 */
-	private int height = 400;
+	private int height = 50;
 
 	/**
 	 * Graph's width
 	 */
-	private int width = 400;
+	private int width = 50;
 
 	/**
 	 * Maximal distance
@@ -43,11 +42,12 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	 * Minimal neighbors distance
 	 */
 	private float minimalDistance = 10 * diameter;
-	
+
 	/**
 	 * Search better position runnable
 	 */
-	private SearchBetterPosition searchBetterPositionThread = new SearchBetterPosition(this);
+	private SearchBetterPosition searchBetterPositionThread = new SearchBetterPosition(
+			this);
 
 	/**
 	 * Vertices list
@@ -58,8 +58,7 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	 * Constructor using a vertices list
 	 */
 	public GeometricGraph(ArrayList<Vertex> verticesList, int width,
-			int height, Model m)
-	{
+			int height, Model m) {
 		super(m);
 		this.width = width;
 		this.height = height;
@@ -76,8 +75,7 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	 * @param m
 	 *            model
 	 */
-	public GeometricGraph(GeometricGraph other, Model m)
-	{
+	public GeometricGraph(GeometricGraph other, Model m) {
 		super(other, m);
 		copyVertices(other.verticesList);
 		init(other.getN(), false);
@@ -88,8 +86,7 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	 */
 	public GeometricGraph(int width, int height,
 			ArrayList<ArrayList<Boolean>> matrix,
-			ArrayList<Vertex> verticesList, Model m)
-	{
+			ArrayList<Vertex> verticesList, Model m) {
 		super(matrix, m);
 		this.width = width;
 		this.height = height;
@@ -102,8 +99,7 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	 * Constructor using an adjacency matrix
 	 */
 	public GeometricGraph(int width, int height,
-			ArrayList<ArrayList<Boolean>> matrix, Model m)
-	{
+			ArrayList<ArrayList<Boolean>> matrix, Model m) {
 		super(matrix, m);
 		this.width = width;
 		this.height = height;
@@ -119,8 +115,7 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	 * @param height
 	 *            Graph height
 	 */
-	public GeometricGraph(int width, int height, int n, int m, Model model)
-	{
+	public GeometricGraph(int width, int height, int n, int m, Model model) {
 		super(n, m, model);
 		this.width = width;
 		this.height = height;
@@ -135,8 +130,7 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	 * @param height
 	 *            Graph height
 	 */
-	public GeometricGraph(int width, int height, int n, Model m)
-	{
+	public GeometricGraph(int width, int height, int n, Model m) {
 		super(m);
 		this.width = width;
 		this.height = height;
@@ -151,8 +145,7 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	 * @param height
 	 *            Graph height
 	 */
-	public GeometricGraph(int width, int height, Model m)
-	{
+	public GeometricGraph(int width, int height, Model m) {
 		super(m);
 		this.width = width;
 		this.height = height;
@@ -161,23 +154,20 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	/**
 	 * Basic constructor
 	 */
-	public GeometricGraph(Model m)
-	{
+	public GeometricGraph(Model m) {
 		super(m);
 	}
 
 	@Override
-	public void addVertex()
-	{
+	public void addVertex() {
 		addVertex(new Vertex());
 	}
 
 	/**
 	 * Add a Vertex
 	 */
-	public Vertex addVertex(String name, int x, int y, boolean isLabel)
-	{
-		Vertex v = new Vertex(name, x, y, diameter, isLabel);
+	public Vertex addVertex(String name, int x, int y, boolean label) {
+		Vertex v = new Vertex(name, x, y, diameter, label);
 		addVertex(v);
 		setChanged();
 		return v;
@@ -186,8 +176,7 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	/**
 	 * Adds a Vertex
 	 */
-	public void addVertex(Vertex vertex)
-	{
+	public void addVertex(Vertex vertex) {
 		stopMove();
 		super.addVertex();
 		verticesList.add(vertex);
@@ -197,8 +186,7 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	/**
 	 * Returns true if Vertices i and j are both fixed
 	 */
-	public boolean areBothFixed(int i, int j)
-	{
+	public boolean areBothFixed(int i, int j) {
 		Vertex vI = verticesList.get(i);
 		Vertex vJ = verticesList.get(j);
 		return (vI.isFixed() && vJ.isFixed());
@@ -207,8 +195,7 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	/**
 	 * Computes pounds between two Vertices
 	 */
-	public float computePounds(int i, int j)
-	{
+	public float computePounds(int i, int j) {
 		if (i == j)
 			return 0;
 		Vertex I = verticesList.get(i);
@@ -233,11 +220,9 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	 * 
 	 * @param verticesList2
 	 */
-	private void copyVertices(ArrayList<Vertex> other)
-	{
+	private void copyVertices(ArrayList<Vertex> other) {
 		verticesList = new ArrayList<Vertex>();
-		for (int i = 0; i < getN(); i++)
-		{
+		for (int i = 0; i < getN(); i++) {
 			Vertex v = new Vertex(other.get(i));
 			verticesList.add(v);
 		}
@@ -246,8 +231,7 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	/**
 	 * Draws an edge between two vertices
 	 */
-	public void drawEdge(Graphics g, int i, int j)
-	{
+	public void drawEdge(Graphics g, int i, int j) {
 		Vertex vI = getVertex(i);
 		int xI = vI.getXPosition();
 		int yI = vI.getYPosition();
@@ -259,18 +243,14 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	}
 
 	public void drawEdge(Graphics g, int xI, int yI, int xJ, int yJ,
-			boolean bothFixed)
-	{
+			boolean bothFixed) {
 		if (bothFixed)
 			g.setColor(model.getFixedColor());
 		// Array drawing
-		if (isOriented())
-		{
+		if (isOriented()) {
 			int triangle[] = getOrientedTriangle(xI, yI, xJ, yJ);
-			int Xs[] =
-			{ triangle[0], triangle[2], triangle[4] };
-			int Ys[] =
-			{ triangle[1], triangle[3], triangle[5] };
+			int Xs[] = { triangle[0], triangle[2], triangle[4] };
+			int Ys[] = { triangle[1], triangle[3], triangle[5] };
 			g.fillPolygon(Xs, Ys, 3);
 		}
 		g.drawLine(xI, yI, xJ, yJ);
@@ -280,8 +260,7 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	/**
 	 * Draws the graph
 	 */
-	public void drawGraph(Graphics g)
-	{
+	public void drawGraph(Graphics g) {
 		for (int i = 0; i < getN(); i++)
 			for (int j = 0; j < getN(); j++)
 				if (areNeighbors(i, j))
@@ -325,41 +304,39 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	/**
 	 * Draws the Vertex i
 	 */
-	private void drawVertex(int i, Graphics g)
-	{
+	private void drawVertex(int i, Graphics g) {
 		Vertex v = verticesList.get(i);
 		boolean fixed = v.isFixed();
+		boolean label = v.isLabel();
 		g.setColor(model.getVerticesColor());
-		if (fixed)
+		if (label) {
+			g.setColor(model.getLabelColor());
+		} else if (fixed) {
 			g.setColor(model.getFixedColor());
+		}
 		v.draw(g);
-		if (fixed)
-			g.setColor(model.getVerticesColor());
+		g.setColor(model.getVerticesColor());
 	}
 
-	public int getDiameter()
-	{
+	public int getDiameter() {
 		return diameter;
 	}
 
 	/**
 	 * @return graphs dimension
 	 */
-	public Dimension getDimension()
-	{
+	public Dimension getDimension() {
 		return new Dimension(width, height);
 	}
 
-	public int getHeight()
-	{
+	public int getHeight() {
 		return height;
 	}
 
 	/**
 	 * Returns three couples representing oriented arrow
 	 */
-	public int[] getOrientedTriangle(int xI, int yI, int xJ, int yJ)
-	{
+	public int[] getOrientedTriangle(int xI, int yI, int xJ, int yJ) {
 		// Middle position
 		int xM = xI - (xI - xJ) / 2;
 		int yM = yI - (yI - yJ) / 2;
@@ -368,8 +345,7 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 		int yP1 = 0;
 		int xP2 = 0;
 		int yP2 = 0;
-		if (xI == xJ)
-		{
+		if (xI == xJ) {
 			int start;
 			if (yI <= yJ)
 				start = yM - diameter;
@@ -379,8 +355,7 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 			yP1 = start;
 			xP2 = xM - diameter;
 			yP2 = start;
-		} else
-		{
+		} else {
 			double dist = Math.sqrt((xI - xJ) * (xI - xJ) + (yI - yJ)
 					* (yI - yJ));
 			// start point definition
@@ -404,18 +379,15 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 			xP1 = (int) (xStart - xN);
 			yP1 = (int) (yStart - yN);
 		}
-		int result[] =
-		{ xM, yM, xP1, yP1, xP2, yP2 };
+		int result[] = { xM, yM, xP1, yP1, xP2, yP2 };
 		return result;
 	}
 
-	public Vertex getVertex(int i)
-	{
+	public Vertex getVertex(int i) {
 		return verticesList.get(i);
 	}
 
-	public int getWidth()
-	{
+	public int getWidth() {
 		return width;
 	}
 
@@ -424,10 +396,8 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	 * 
 	 * @param n
 	 */
-	private void init(int n, boolean createVerticesList)
-	{
-		for (int i = 0; i < n; i++)
-		{
+	private void init(int n, boolean createVerticesList) {
+		for (int i = 0; i < n; i++) {
 			if (createVerticesList)
 				verticesList.add(new Vertex(Vertex.indexToString(i), 0, 0,
 						diameter, false));
@@ -436,32 +406,28 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 			moveAllVertices();
 	}
 
-	public boolean isAllowedToMove()
-	{
+	public boolean isAllowedToMove() {
 		return searchBetterPositionThread != null;
 	}
 
 	/**
 	 * Lets all unfixed vertices move
 	 */
-	public void letEmMove()
-	{
+	public void letEmMove() {
 		searchBetterPositionThread = new SearchBetterPosition(this);
 		searchBetterPositionThread.start();
 		setChanged();
 	}
 
 	/**
-	 * Changes every Vertex's position
+	 * Changes every Vertex position
 	 */
-	public void moveAllVertices()
-	{
+	public void moveAllVertices() {
 		Random R = new Random(System.currentTimeMillis());
 		int n = verticesList.size();
 		int rands[][] = new int[n][2];
 
-		for (int i = 0; i < n; i++)
-		{
+		for (int i = 0; i < n; i++) {
 			rands[i][0] = R.nextInt(width - 4 * diameter) + 2 * diameter;
 			rands[i][1] = R.nextInt(height - 4 * diameter) + 2 * diameter;
 		}
@@ -472,16 +438,14 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	}
 
 	/**
-	 * Changes every Vertex's position
+	 * Changes every Vertex position
 	 */
-	public void moveAllVerticesByComponent()
-	{
+	public void moveAllVerticesByComponent() {
 		Random R = new Random(System.currentTimeMillis());
 		int n = verticesList.size();
 		int rands[][] = new int[n][2];
 
-		for (int i = 0; i < n; i++)
-		{
+		for (int i = 0; i < n; i++) {
 			rands[i][0] = R.nextInt(width - 4 * diameter) + 2 * diameter;
 			rands[i][1] = R.nextInt(height - 4 * diameter) + 2 * diameter;
 		}
@@ -495,16 +459,14 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	/**
 	 * Changes a Vertex's position
 	 */
-	public void moveVertex(int i, int x, int y)
-	{
+	public void moveVertex(int i, int x, int y) {
 		verticesList.get(i).setXPosition(x);
 		verticesList.get(i).setYPosition(y);
 		setChanged();
 	}
 
 	@Override
-	public void removeVertex(int i)
-	{
+	public void removeVertex(int i) {
 		super.removeVertex(i);
 		verticesList.remove(i);
 		setChanged();
@@ -513,39 +475,33 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	/**
 	 * removes specified vertex
 	 */
-	public void removeVertex(Vertex v)
-	{
+	public void removeVertex(Vertex v) {
 		int i = verticesList.indexOf(v);
 		this.removeVertex(i);
 		setChanged();
 	}
 
-	public void setDiameter(int diameter)
-	{
+	public void setDiameter(int diameter) {
 		this.diameter = diameter;
 	}
 
-	public void setDiameter(int i, int diameter)
-	{
+	public void setDiameter(int i, int diameter) {
 		verticesList.get(i).setDiameter(diameter);
 		setChanged();
 	}
 
-	public void setDimension(Dimension d)
-	{
+	public void setDimension(Dimension d) {
 		setWidth((int) d.getWidth());
 		setHeight((int) d.getHeight());
 		setChanged();
 	}
 
-	public void setFixed(int i, boolean fixed)
-	{
+	public void setStateFixed(int i, boolean fixed) {
 		verticesList.get(i).setFixed(fixed);
 		setChanged();
 	}
 
-	public void setHeight(int height)
-	{
+	public void setHeight(int height) {
 		int n = verticesList.size();
 		if (this.height > height)
 			for (int i = 0; i < n; i++)
@@ -554,14 +510,12 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 		this.height = height;
 	}
 
-	public void setName(int i, String name)
-	{
+	public void setName(int i, String name) {
 		verticesList.get(i).setName(name);
 		setChanged();
 	}
 
-	public void setWidth(int width)
-	{
+	public void setWidth(int width) {
 		int n = verticesList.size();
 		if (this.width > width)
 			for (int i = 0; i < n; i++)
@@ -570,14 +524,12 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 		this.width = width;
 	}
 
-	public void setXPosition(int i, int position)
-	{
+	public void setXPosition(int i, int position) {
 		verticesList.get(i).setXPosition(position);
 		setChanged();
 	}
 
-	public void setYPosition(int i, int position)
-	{
+	public void setYPosition(int i, int position) {
 		verticesList.get(i).setYPosition(position);
 		setChanged();
 	}
@@ -585,8 +537,7 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	/**
 	 * Stop move
 	 */
-	public void stopMove()
-	{
+	public void stopMove() {
 		if (searchBetterPositionThread == null)
 			return;
 		searchBetterPositionThread.interrupt();
@@ -598,13 +549,16 @@ public class GeometricGraph extends MathematicGraph implements Serializable
 	 * Checks if a click concerns a Vertex and returns its number if its exists,
 	 * -1 else.
 	 */
-	public int whichVertex(Point p, int multiplier)
-	{
+	public int whichVertex(Point p, int multiplier, Graphics g) {
 		int n = verticesList.size();
-		for (int i = 0; i < n; i++)
-		{
+		for (int i = 0; i < n; i++) {
 			Vertex v = verticesList.get(i);
-			if (v.getRectangle(multiplier).contains(p))
+			if (v.getCircleRectangle(multiplier).contains(p))
+				return i;
+		}
+		for (int i = 0; i < n; i++) {
+			Vertex v = verticesList.get(i);
+			if (v.getNameRectangle(g).contains(p))
 				return i;
 		}
 		return -1;

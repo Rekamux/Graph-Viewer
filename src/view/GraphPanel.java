@@ -13,13 +13,12 @@ import javax.swing.JPanel;
 
 import model.GraphModel;
 import model.Model;
-import model.Vertex;
 import model.Model.MouseActionMode;
+import model.Vertex;
 import controller.MainController;
 
 @SuppressWarnings("serial")
-public class GraphPanel extends JPanel implements Observer
-{
+public class GraphPanel extends JPanel implements Observer {
 	/**
 	 * Main controller
 	 */
@@ -33,8 +32,7 @@ public class GraphPanel extends JPanel implements Observer
 	/**
 	 * @param model
 	 */
-	public GraphPanel(MainController controller, GraphModel graph)
-	{
+	public GraphPanel(MainController controller, GraphModel graph) {
 		this.controller = controller;
 		this.graph = graph;
 		controller.getModel().addObserver(this);
@@ -43,30 +41,30 @@ public class GraphPanel extends JPanel implements Observer
 				.getGraphPanelMouseListener());
 		addMouseMotionListener(controller.getGraphController()
 				.getGraphPanelMotionListener());
+		addComponentListener(controller.getProgramController()
+				.getResizeComponentListener());
 	}
 
 	@Override
-	public void update(Observable arg0, Object arg1)
-	{
+	public void update(Observable arg0, Object arg1) {
 		repaint();
 	}
 
 	@Override
-	public void paintComponent(Graphics g)
-	{
+	public void paintComponent(Graphics g) {
 		drawGraph(controller, graph, g, getSize());
 	}
 
 	/**
 	 * Draws a graph
+	 * 
 	 * @param controller
 	 * @param graph
 	 * @param g
 	 * @param d
 	 */
 	public static void drawGraph(MainController controller, GraphModel graph,
-			Graphics g, Dimension d)
-	{
+			Graphics g, Dimension d) {
 		Model model = controller.getModel();
 		int n = graph.getN();
 		g.setColor(model.getBackgroundColor());
@@ -81,35 +79,32 @@ public class GraphPanel extends JPanel implements Observer
 				if (graph.areNeighbors(i, j))
 					graph.drawEdge(g, i, j);
 		if (mouseActionMode == MouseActionMode.MOUSE_CHANGES_EDGES
-				&& selectedVertex != -1 && linkingPosition != null)
-		{
+				&& selectedVertex != -1 && linkingPosition != null) {
 			Vertex v = graph.getVertex(selectedVertex);
 			g.setColor(model.getSelectedColor());
 			graph.drawEdge(g, v.getXPosition(), v.getYPosition(),
 					(int) linkingPosition.getX(), (int) linkingPosition.getY(),
 					false);
 		}
-		if (selectedVertex != -1)
-		{
+		if (selectedVertex != -1) {
 			g.setColor(model.getSelectedColor());
 			graph.getVertex(selectedVertex).draw(g);
 		}
 		Rectangle selectionRect = model.getSelectionRect();
-		if (selectionRect != null)
-		{
+		if (selectionRect != null) {
 			if (mouseActionMode == MouseActionMode.MOUSE_MOVES_VERTICES)
 				g.setColor(model.getFixedColor());
 			else if (mouseActionMode == MouseActionMode.MOUSE_SELECTS_VERTICES)
 				g.setColor(model.getSelectedColor());
 			Graphics2D g2d = (Graphics2D) g;
-			float dashArray[] =
-			{ 1, 2 };
+			float dashArray[] = { 1, 2 };
 			BasicStroke bs = new BasicStroke((float) (1),
 					BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER,
 					(float) (10), dashArray, (float) (0));
 			g2d.setStroke(bs);
-			g2d.drawRect((int) (selectionRect.getMinX()), (int) (selectionRect
-					.getMinY()), (int) (selectionRect.getWidth()),
+			g2d.drawRect((int) (selectionRect.getMinX()),
+					(int) (selectionRect.getMinY()),
+					(int) (selectionRect.getWidth()),
 					(int) (selectionRect.getHeight()));
 		}
 	}

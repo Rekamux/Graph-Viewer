@@ -104,7 +104,7 @@ public class ProgramController extends AbstractController {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			GraphModel graph = new GraphModel(controller.getModel()
-					.getNextGraphName(), controller.getModel());
+					.getNextGraphName(),  controller.getModel());
 			createGraph(graph);
 			controller.getModel().notifyObservers();
 		}

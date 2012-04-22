@@ -243,6 +243,9 @@ public class GraphToolPanel extends JPanel implements Observer
 
 		case VERTICES:
 			return verticesColorButton;
+			
+		case LABEL:
+			return stampColorButton;
 		}
 		return null;
 	}
@@ -261,7 +264,7 @@ public class GraphToolPanel extends JPanel implements Observer
 		edgesColorButton.setBackground(model.getEdgesColor());
 		fixedColorButton.setBackground(model.getFixedColor());
 		selectedColorButton.setBackground(model.getSelectedColor());
-		stampColorButton.setBackground(model.getStampColor());
+		stampColorButton.setBackground(model.getLabelColor());
 		moveCheckBox.setSelected(graph.isAllowedToMove());
 		orientedCheckBox.setSelected(graph.isOriented());
 		nameField.setText(graph.getGraphsName());
