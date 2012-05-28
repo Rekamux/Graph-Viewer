@@ -85,7 +85,7 @@ public class GraphPanel extends JPanel implements Observer {
 				g.setColor(model.getSelectedColor());
 				graph.drawEdge(g, v.getXPosition(), v.getYPosition(),
 						(int) linkingPosition.getX(),
-						(int) linkingPosition.getY(), false);
+						(int) linkingPosition.getY());
 			}
 		}
 		if (selectedVertex != -1) {
@@ -94,9 +94,7 @@ public class GraphPanel extends JPanel implements Observer {
 		}
 		Rectangle selectionRect = model.getSelectionRect();
 		if (selectionRect != null) {
-			if (mouseActionMode == MouseActionMode.MOUSE_MOVES_VERTICES)
-				g.setColor(model.getFixedColor());
-			else if (mouseActionMode == MouseActionMode.MOUSE_SELECTS_VERTICES)
+			if (mouseActionMode == MouseActionMode.MOUSE_SELECTS_VERTICES)
 				g.setColor(model.getSelectedColor());
 			Graphics2D g2d = (Graphics2D) g;
 			float dashArray[] = { 1, 2 };

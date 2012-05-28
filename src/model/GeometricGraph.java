@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import utils.Computing;
-import view.SearchBetterPosition;
 
 /**
  * Represents a graph under plan representation
@@ -42,12 +41,6 @@ public class GeometricGraph extends MathematicGraph implements Serializable {
 	 * Minimal neighbors distance
 	 */
 	private float minimalDistance = 10 * diameter;
-
-	/**
-	 * Search better position runnable
-	 */
-	private SearchBetterPosition searchBetterPositionThread = new SearchBetterPosition(
-			this);
 
 	/**
 	 * Vertices list
@@ -177,19 +170,9 @@ public class GeometricGraph extends MathematicGraph implements Serializable {
 	 * Adds a Vertex
 	 */
 	public void addVertex(Vertex vertex) {
-		stopMove();
 		super.addVertex();
 		verticesList.add(vertex);
 		setChanged();
-	}
-
-	/**
-	 * Returns true if Vertices i and j are both fixed
-	 */
-	public boolean areBothFixed(int i, int j) {
-		Vertex vI = verticesList.get(i);
-		Vertex vJ = verticesList.get(j);
-		return (vI.isFixed() && vJ.isFixed());
 	}
 
 	/**
@@ -238,14 +221,10 @@ public class GeometricGraph extends MathematicGraph implements Serializable {
 		Vertex vJ = getVertex(j);
 		int xJ = vJ.getXPosition();
 		int yJ = vJ.getYPosition();
-		boolean bothFixed = areBothFixed(i, j);
-		drawEdge(g, xI, yI, xJ, yJ, bothFixed);
+		drawEdge(g, xI, yI, xJ, yJ);
 	}
 
-	public void drawEdge(Graphics g, int xI, int yI, int xJ, int yJ,
-			boolean bothFixed) {
-		if (bothFixed)
-			g.setColor(model.getFixedColor());
+	public void drawEdge(Graphics g, int xI, int yI, int xJ, int yJ) {
 		// Array drawing
 		if (isOriented()) {
 			int triangle[] = getOrientedTriangle(xI, yI, xJ, yJ);
@@ -306,13 +285,10 @@ public class GeometricGraph extends MathematicGraph implements Serializable {
 	 */
 	private void drawVertex(int i, Graphics g) {
 		Vertex v = verticesList.get(i);
-		boolean fixed = v.isFixed();
 		boolean label = v.isLabel();
 		g.setColor(model.getVerticesColor());
 		if (label) {
 			g.setColor(model.getLabelColor());
-		} else if (fixed) {
-			g.setColor(model.getFixedColor());
 		}
 		v.draw(g);
 		g.setColor(model.getVerticesColor());
@@ -406,19 +382,6 @@ public class GeometricGraph extends MathematicGraph implements Serializable {
 			moveAllVertices();
 	}
 
-	public boolean isAllowedToMove() {
-		return searchBetterPositionThread != null;
-	}
-
-	/**
-	 * Lets all unfixed vertices move
-	 */
-	public void letEmMove() {
-		searchBetterPositionThread = new SearchBetterPosition(this);
-		searchBetterPositionThread.start();
-		setChanged();
-	}
-
 	/**
 	 * Changes every Vertex position
 	 */
@@ -496,11 +459,6 @@ public class GeometricGraph extends MathematicGraph implements Serializable {
 		setChanged();
 	}
 
-	public void setStateFixed(int i, boolean fixed) {
-		verticesList.get(i).setFixed(fixed);
-		setChanged();
-	}
-
 	public void setHeight(int height) {
 		int n = verticesList.size();
 		if (this.height > height)
@@ -538,17 +496,6 @@ public class GeometricGraph extends MathematicGraph implements Serializable {
 		for (Vertex v : vertices) {
 			removeVertex(v);
 		}
-	}
-
-	/**
-	 * Stop move
-	 */
-	public void stopMove() {
-		if (searchBetterPositionThread == null)
-			return;
-		searchBetterPositionThread.interrupt();
-		System.out.println("interrupt");
-		searchBetterPositionThread = null;
 	}
 
 	/**

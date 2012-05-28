@@ -83,16 +83,6 @@ public class GraphToolPanel extends JPanel implements Observer
 	private JButton edgesColorButton = new JButton();
 
 	/**
-	 * Fixed color choose label
-	 */
-	private JLabel fixedColorLabel = new JLabel("Fixed vertex color: ");
-
-	/**
-	 * Fixed color choose button
-	 */
-	private JButton fixedColorButton = new JButton();
-
-	/**
 	 * Selected color choose label
 	 */
 	private JLabel selectedColorLabel = new JLabel("Selected vertex color: ");
@@ -128,11 +118,6 @@ public class GraphToolPanel extends JPanel implements Observer
 	 * Component resize button
 	 */
 	private JButton complementButton = new JButton("Graph complement");
-
-	/**
-	 * Move check box
-	 */
-	private JCheckBox moveCheckBox = new JCheckBox("Search for a better position");
 
 	/**
 	 * Oriented check box
@@ -181,11 +166,6 @@ public class GraphToolPanel extends JPanel implements Observer
 		e.add(edgesColorButton);
 		add(e);
 
-		JPanel f = new JPanel();
-		f.add(fixedColorLabel);
-		f.add(fixedColorButton);
-		add(f);
-
 		JPanel s = new JPanel();
 		s.add(selectedColorLabel);
 		s.add(selectedColorButton);
@@ -205,9 +185,6 @@ public class GraphToolPanel extends JPanel implements Observer
 		complementButton.addActionListener(controller.getGraphController()
 				.getComplementActionListener());
 		add(complementButton);
-		moveCheckBox.addActionListener(controller.getGraphController()
-				.getAllowMoveActionListener());
-		add(moveCheckBox);
 		orientedCheckBox.addActionListener(controller.getGraphController()
 				.getOrientedActionListener());
 		add(orientedCheckBox);
@@ -235,9 +212,6 @@ public class GraphToolPanel extends JPanel implements Observer
 		case EDGES:
 			return edgesColorButton;
 
-		case FIXED:
-			return fixedColorButton;
-
 		case SELECTED:
 			return selectedColorButton;
 
@@ -262,10 +236,8 @@ public class GraphToolPanel extends JPanel implements Observer
 		backgroundColorButton.setBackground(model.getBackgroundColor());
 		verticesColorButton.setBackground(model.getVerticesColor());
 		edgesColorButton.setBackground(model.getEdgesColor());
-		fixedColorButton.setBackground(model.getFixedColor());
 		selectedColorButton.setBackground(model.getSelectedColor());
 		stampColorButton.setBackground(model.getLabelColor());
-		moveCheckBox.setSelected(graph.isAllowedToMove());
 		orientedCheckBox.setSelected(graph.isOriented());
 		nameField.setText(graph.getGraphsName());
 	}

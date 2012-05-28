@@ -162,9 +162,6 @@ public class GraphController extends AbstractController {
 			MouseActionMode mouseActionMode = model.getMouseActionMode();
 			JComponent component = (JComponent) event.getSource();
 			switch (mouseActionMode) {
-			case MOUSE_MOVES_VERTICES:
-				model.changeVerticesFixationInRectangle(component.getGraphics());
-				break;
 
 			case MOUSE_ADDS_VERTICES:
 				break;
@@ -234,8 +231,6 @@ public class GraphController extends AbstractController {
 			switch (mouseActionMode) {
 			case MOUSE_MOVES_VERTICES:
 				model.selectVertex(e.getPoint(), component.getGraphics());
-				model.changeVertexFixation(e.getPoint(),
-						component.getGraphics());
 				break;
 
 			case MOUSE_SELECTS_VERTICES:
@@ -317,22 +312,6 @@ public class GraphController extends AbstractController {
 		}
 	};
 
-	private ActionListener allowMoveActionListener = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			JCheckBox b = (JCheckBox) e.getSource();
-			boolean checked = b.isSelected();
-			GraphModel graph = controller.getModel().getCurrentGraph();
-			if (!checked) {
-				if (graph == null)
-					return;
-				graph.letEmMove();
-			} else
-				graph.stopMove();
-			controller.getModel().notifyObservers();
-		}
-	};
-
 	private ActionListener orientedActionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -386,13 +365,6 @@ public class GraphController extends AbstractController {
 	 */
 	public ActionListener getComplementActionListener() {
 		return complementActionListener;
-	}
-
-	/**
-	 * @return the allowMoveActionListener
-	 */
-	public ActionListener getAllowMoveActionListener() {
-		return allowMoveActionListener;
 	}
 
 	/**

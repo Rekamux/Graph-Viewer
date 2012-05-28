@@ -58,9 +58,6 @@ public class Vertex implements Serializable {
 	 */
 	private int diameter = 10;
 	
-	/** Vertex is fixed */
-	private boolean fixed = false;
-	
 	/** Vertex is a label */
 	private boolean label = false;
 
@@ -115,7 +112,6 @@ public class Vertex implements Serializable {
 		nameAngle = other.nameAngle;
 		nameDistance = other.nameDistance;
 		diameter = other.diameter;
-		fixed = other.fixed;
 		label = other.label;
 	}
 
@@ -316,23 +312,11 @@ public class Vertex implements Serializable {
 		return nameDistance;
 	}
 
-	public boolean isFixed() {
-		return fixed;
-	}
-
-	public void setFixed(boolean fixed) {
-		this.fixed = fixed;
-		if (label && !fixed) {
-			throw new IllegalArgumentException("Cannot set a label not fixed !");
-		}
-	}
-
 	public boolean isLabel() {
 		return label;
 	}
 
 	public void setLabel(boolean label) {
 		this.label = label;
-		setFixed(label);
 	}
 }

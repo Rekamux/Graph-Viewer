@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Observable;
 
@@ -15,7 +16,8 @@ import java.util.Observable;
  * @author Ax
  * 
  */
-public class Model extends Observable {
+@SuppressWarnings("serial")
+public class Model extends Observable implements Serializable {
 
 	public Model() {
 		setChanged();
@@ -45,7 +47,7 @@ public class Model extends Observable {
 	 * 
 	 */
 	public static enum ColorOption {
-		BACKGROUND, VERTICES, FIXED, EDGES, SELECTED, LABEL
+		BACKGROUND, VERTICES, EDGES, SELECTED, LABEL
 	}
 
 	/**
@@ -59,10 +61,6 @@ public class Model extends Observable {
 
 		case EDGES:
 			edgesColor = color;
-			break;
-
-		case FIXED:
-			fixedColor = color;
 			break;
 
 		case SELECTED:
@@ -91,9 +89,6 @@ public class Model extends Observable {
 		case EDGES:
 			return edgesColor;
 
-		case FIXED:
-			return fixedColor;
-
 		case SELECTED:
 			return selectedColor;
 
@@ -114,9 +109,6 @@ public class Model extends Observable {
 
 		case EDGES:
 			return "edges";
-
-		case FIXED:
-			return "fixed vertices and edges";
 
 		case SELECTED:
 			return "selected vertex";
@@ -161,11 +153,6 @@ public class Model extends Observable {
 	 * Edges color
 	 */
 	private Color edgesColor = Color.black;
-
-	/**
-	 * Fixed color
-	 */
-	private Color fixedColor = Color.black;
 
 	/** Label color */
 	private Color labelColor = Color.black;
@@ -280,43 +267,6 @@ public class Model extends Observable {
 	}
 
 	/**
-	 * Change vertex fixation included in point
-	 */
-	public void changeVertexFixation(Point point, Graphics graphics) {
-		GraphModel g = getCurrentGraph();
-		if (g == null)
-			return;
-		int i = g.whichVertex(point, vertexDiameterMultiplier, graphics);
-		if (i == -1)
-			return;
-		Vertex v = g.getVertex(i);
-		if (v.isLabel()) {
-			return;
-		}
-		v.setFixed(!v.isFixed());
-		setChanged();
-	}
-
-	/**
-	 * Inverts vertices fixation in drawn rectangle
-	 */
-	public void changeVerticesFixationInRectangle(Graphics graphics) {
-		GraphModel g = getCurrentGraph();
-		if (g == null)
-			return;
-		if (selectionRectangle == null)
-			return;
-		ArrayList<Integer> indices = getIndicesInRectangle(graphics);
-		for (Integer i : indices) {
-			Vertex v = g.getVertex(i);
-			if (!v.isLabel()) {
-				v.setFixed(!v.isFixed());
-			}
-		}
-		setChanged();
-	}
-
-	/**
 	 * Adds a graph to the model
 	 */
 	public void createGraph(GraphModel graph) {
@@ -375,9 +325,6 @@ public class Model extends Observable {
 			return;
 		if (vertexDragged == null)
 			return;
-		if (!vertexDragged.isLabel()) {
-			vertexDragged.setFixed(true);
-		}
 		int x = (int) point.getX();
 		int y = (int) point.getY();
 		if (x >= 0 && x < g.getWidth())
@@ -450,13 +397,6 @@ public class Model extends Observable {
 	 */
 	public Color getEdgesColor() {
 		return edgesColor;
-	}
-
-	/**
-	 * @return the fixedColor
-	 */
-	public Color getFixedColor() {
-		return fixedColor;
 	}
 
 	/**
