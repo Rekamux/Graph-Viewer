@@ -53,7 +53,7 @@ public class GraphTabbedPane extends JTabbedPane implements Observer
 	{
 		Component component2 = super.add(component);
 		final JButton closeButton = new JButton(new ImageIcon(
-				"images/closeNotActivated.png"));
+				getClass().getResource("/closeNotActivated.png")));
 		closeButton.addMouseListener(new MouseListener()
 		{
 			@Override
@@ -70,13 +70,13 @@ public class GraphTabbedPane extends JTabbedPane implements Observer
 			public void mouseExited(MouseEvent arg0)
 			{
 				closeButton.setIcon(new ImageIcon(
-						"images/closeNotActivated.png"));
+						getClass().getResource("/closeNotActivated.png")));
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent arg0)
 			{
-				closeButton.setIcon(new ImageIcon("images/close.png"));
+				closeButton.setIcon(new ImageIcon(getClass().getResource("/close.png")));
 			}
 
 			@Override

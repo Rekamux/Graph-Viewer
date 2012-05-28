@@ -29,19 +29,19 @@ public class ProgramWindowToolBar extends JToolBar implements Observer
 	/**
 	 * Graph's properties tool
 	 */
-	private JButton graphButton = new JButton(new ImageIcon("images/graph.png"));
+	private JButton graphButton = new JButton(new ImageIcon(getClass().getResource("/graph.png")));
 
 	/**
 	 * Create an edge tool
 	 */
-	private JButton createEdgeButton = new JButton(new ImageIcon(
-			"images/edge.png"));
+	private JButton createEdgeButton = new JButton(new ImageIcon(getClass().getResource(
+			"/edge.png")));
 
 	/**
 	 * Create a vertex tool
 	 */
 	private JButton vertexButton = new JButton(new ImageIcon(
-			"images/vertex.png"));
+			getClass().getResource("/vertex.png")));
 
 	/**
 	 * All buttons tab
@@ -52,13 +52,13 @@ public class ProgramWindowToolBar extends JToolBar implements Observer
 	/**
 	 * Undo button
 	 */
-	private JButton undoButton = new JButton(new ImageIcon("images/undo.png"));
+	private JButton undoButton = new JButton(new ImageIcon(getClass().getResource("/undo.png")));
 
 	/**
 	 * Redo button
 	 */
 	private JButton doUndidButton = new JButton(
-			new ImageIcon("images/redo.png"));
+			new ImageIcon(getClass().getResource("/redo.png")));
 
 	/**
 	 * Constructor
